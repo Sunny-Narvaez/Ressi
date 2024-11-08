@@ -28,11 +28,11 @@ abstract class Reservacion {
     cliente: Cliente;
     mesa: Mesa;
     numeroDeAsistentes: number;
-    hora: string;
-    fecha: string;
+    hora: Date;
+    fecha: Date;
     mesero: string;
 
-    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: string, fecha: string, mesero: string) {
+    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date, fecha: Date, mesero: string) {
         if (new.target === Reservacion) {
             throw new TypeError("Cannot construct Reservacion instances directly");
         }
@@ -53,14 +53,15 @@ abstract class Reservacion {
     }
 }
 
+
 class ReservaConcreta extends Reservacion {
-    constructor(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) {
+    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date, fecha: Date, mesero: string) {
         super(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero);
     }
 }
 
 class ReservacionNormal extends Reservacion {
-    constructor(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) {
+    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date, fecha: Date, mesero: string) {
         super(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero);
     }
 
@@ -74,7 +75,7 @@ class ReservacionNormal extends Reservacion {
 }
 
 class DiningParty extends Reservacion {
-    constructor(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) {
+    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date, fecha: Date, mesero: string) {
         super(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero);
     }
 
@@ -111,9 +112,11 @@ class ListaDeMesas {
 
 class ListaDeClientes {
     clientes: Cliente[];
+    reservaciones: ListaDeReservaciones;
 
-    constructor() {
+    constructor(reservaciones: ListaDeReservaciones) {
         this.clientes = [];
+        this.reservaciones = reservaciones;
     }
 
     agregarCliente(cliente: Cliente) {
@@ -130,7 +133,7 @@ class ListaDeClientes {
     }
 
     buscarReservacion(clienteNombre: string): Reservacion | undefined {
-        // Implementar lógica para buscar reservación
+        return this.reservaciones.buscarReservacion(clienteNombre);
     }
 }
 
@@ -147,12 +150,16 @@ class ListaDeReservaciones {
 
     crearReservacion(tipo: string, cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: string, fecha: string, mesero: string): Reservacion | undefined {
         let nuevaReservacion;
+        const horaDate = new Date(`1970-01-01T${hora}:00`);
+        const fechaDate = new Date(fecha);
         if (tipo === 'normal') {
-            nuevaReservacion = new ReservacionNormal(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero);
+            nuevaReservacion = new ReservacionNormal(cliente, mesa, numeroDeAsistentes, horaDate, fechaDate, mesero);
         } else if (tipo === 'diningParty') {
-            nuevaReservacion = new DiningParty(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero);
+            nuevaReservacion = new DiningParty(cliente, mesa, numeroDeAsistentes, horaDate, fechaDate, mesero);
         }
-        this.reservaciones.push(nuevaReservacion);
+        if (nuevaReservacion) {
+            this.reservaciones.push(nuevaReservacion);
+        }
         return nuevaReservacion;
     }
 
@@ -167,7 +174,8 @@ class SistemaReservas {
     reservaciones: ListaDeReservaciones;
 
     constructor() {
-        this.clientes = new ListaDeClientes();
+        const listaDeReservaciones = new ListaDeReservaciones();
+        this.clientes = new ListaDeClientes(listaDeReservaciones);
         this.mesas = new ListaDeMesas();
         this.reservaciones = new ListaDeReservaciones();
     }
@@ -185,14 +193,15 @@ class SistemaReservas {
     }
 }
 
+// Test the code
 const mesa1 = new Mesa(4, 1);
 const cliente1 = new Cliente("Juan Perez", "1234567890", "juan.perez@example.com", ["Nueces"], []);
-const reserva1 = new ReservaConcreta(cliente1, mesa1, 4, "18:00", "2023-10-10", "Carlos");
+const reserva1 = new ReservaConcreta(cliente1, mesa1, 4, new Date("1970-01-01T18:00:00"), new Date("2023-10-10"), "Carlos");
 reserva1.confirmarReserva();
 
-const reservaNormal = new ReservacionNormal(cliente1, mesa1, 4, "18:00", "2023-10-10", "Carlos");
+const reservaNormal = new ReservacionNormal(cliente1, mesa1, 4, new Date("1970-01-01T18:00:00"), new Date("2023-10-10"), "Carlos");
 reservaNormal.confirmarReserva();
 
-const diningParty = new DiningParty(cliente1, mesa1, 4, "18:00", "2023-10-10", "Carlos");
+const diningParty = new DiningParty(cliente1, mesa1, 4, new Date("1970-01-01T18:00:00"), new Date("2023-10-10"), "Carlos");
 diningParty.confirmarReserva();
 diningParty.confirmarMenuEspecial();

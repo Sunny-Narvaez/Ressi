@@ -1,9 +1,8 @@
-
+"use strict";
 class Interfaz {
     constructor() {
         this.initEventListeners();
     }
-
     // Inicializar los listeners de eventos
     initEventListeners() {
         const botonEjemplo = document.getElementById('botonEjemplo');
@@ -11,9 +10,8 @@ class Interfaz {
             botonEjemplo.addEventListener('click', this.handleButtonClick.bind(this));
         }
     }
-
     // Manejar el evento de click del botón
-    handleButtonClick(event: Event) {
+    handleButtonClick(event) {
         console.log('Botón clickeado');
         // Aquí puedes conectar con las clases del sistema
         // Ejemplo: 
@@ -21,7 +19,7 @@ class Interfaz {
         // sistema.realizarAccion();
     }
 }
-TextMetrics
+TextMetrics;
 // Inicializar la interfaz cuando el DOM esté cargado
 document.addEventListener('DOMContentLoaded', () => {
     new Interfaz();

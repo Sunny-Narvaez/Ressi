@@ -5,8 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservas</title>
     <script src="Reservas.js" defer></script>
+    <style>
+        body {
+            background-color: #1E201E;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Helvetica, Arial, sans-serif; /* Set font to Helvetica */
+        }
+        .top-grid {
+            display: grid;
+            place-items: center;
+            width: 100%;
+            height: 50px;
+            background-color: #3C3D37;
+            color: white;
+            font-size: 24px;
+            margin-bottom: 20px;
+            position: absolute;
+            top: 0;
+        }
+        .menu-container {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 300px;
+            padding: 10px;
+            display: grid;
+            grid-template-rows: repeat(4, 1fr); /* Create 4 equal rows */
+            gap: 10px; /* Space between buttons */
+            height: calc(100vh - 80px - 20px); /* Adjust height to fill the page */
+        }
+        .menu-container button {
+            background-color: #3C3D37;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px; /* Increase font size */
+            text-align: left; /* Align text to the right */
+        }
+        .menu-container button:hover {
+            background-color: #697565;
+        }
+    </style>
 </head>
 <body>
-    <!-- Contenido de la página -->
+    <div class="top-grid" id="top-grid">
+        Lista de reservaciones
+    </div>
+    <div class="menu-container right">
+        <button onclick="updateTopGrid('Lista de reservaciones')">Lista de reservaciones</button>
+        <button onclick="updateTopGrid('Lista de espera')">Lista de espera</button>
+        <button onclick="updateTopGrid('Lista de clientes')">Lista de clientes</button>
+        <button onclick="updateTopGrid('Lista de mesas')">Lista de mesas</button>
+    </div>
+    <script>
+        function updateTopGrid(buttonName) {
+            document.getElementById('top-grid').innerText = buttonName;
+        }
+    </script>
 </body>
 </html>
