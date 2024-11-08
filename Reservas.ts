@@ -39,8 +39,8 @@ abstract class Reservacion {
         this.cliente = cliente;
         this.mesa = mesa;
         this.numeroDeAsistentes = numeroDeAsistentes;
-        this.hora = hora;
-        this.fecha = fecha;
+        this.hora = new Date(hora);
+        this.fecha = new Date(fecha);
         this.mesero = mesero;
     }
 
