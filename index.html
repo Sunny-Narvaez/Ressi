@@ -5,9 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Object Management</title>
     <style>
-         body {
-        background-color: #1E201E;
+        body {
+            background-color: #1E201E;
         }
+        .mesa-button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            margin: 5px 0;
+            position: relative;
+        }
+
+        .dropdown-content {
+         display: none;
+         position: absolute;
+         background-color: #f9f9f9;
+         min-width: 160px;
+         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+         padding: 12px 16px;
+         z-index: 1;
+        }
+
+        .mesa-button:hover .dropdown-content,
+        .cliente-button:hover .dropdown-content,
+        .reservacion-button:hover .dropdown-content {
+            display: block;
+        }
+
         .top-grid {
             display: grid;
             place-items: center;
@@ -21,7 +45,7 @@
             top: 0;
         }
         .menu-container {
-            position: absolute;
+            position: fixed; /* Changed from absolute to fixed */
             top: 50px;
             right: 0;
             width: 300px;
@@ -55,7 +79,7 @@
             overflow: auto; /* Add scrollbars if content overflows */
             display: grid;
             grid-template-columns: repeat(8, 1fr); /* Create 4 equal columns */
-            grid-template-rows: repeat(6, 1fr); /* Create 2 equal rows */
+            grid-template-rows: repeat(12, 1fr); /* Create 2 equal rows */
             gap: 10px; /* Space between grid items */
         }
         .modal {
@@ -124,7 +148,7 @@
             <div id="form-fields">
                 <!-- Dynamic form fields will be inserted here -->
             </div>
-            <button onclick="createObject()">Crear</button>
+            <button onclick="createObject()">Crear1.0</button>
         </div>
     </div>
 
@@ -218,28 +242,6 @@
 
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
-        }
-
-        function createObject() {
-            const objectType = document.getElementById('object-type').value;
-            let data = {};
-
-            if (objectType === 'mesa') {
-                data.numMesa = document.getElementById('mesa-num').value;
-                data.capacidad = document.getElementById('mesa-capacidad').value;
-            } else if (objectType === 'cliente') {
-                data.nombreCliente = document.getElementById('cliente-nombre').value;
-                data.emailCliente = document.getElementById('cliente-email').value;
-            } else if (objectType === 'reservacion') {
-                data.fechaReservacion = document.getElementById('reservacion-fecha').value;
-                data.horaReservacion = document.getElementById('reservacion-hora').value;
-            }
-
-            console.log('Creating object:', objectType, data);
-            // Add your logic to create the object
-
-            // Hide the create form after creation
-            closeModal('create-form-modal');
         }
 
         function updateFormFields() {
@@ -406,5 +408,160 @@
             closeModal('search-form-modal');
         }
     </script>
+    <script>
+    // Show the create form modal
+    function showCreateForm() {
+        document.getElementById('create-form').style.display = 'block';
+    }
+
+    // Close the create form modal
+    function closeCreateForm() {
+        document.getElementById('create-form').style.display = 'none';
+    }
+    
+    function showDeleteForm() {
+        document.getElementById('delete-form').style.display = 'block';
+    }
+
+    // Close the create form modal
+    function closeDeleteForm() {
+        document.getElementById('delete-form').style.display = 'none';
+    }
+
+    function showUpdateForm() {
+        document.getElementById('update-form').style.display = 'block';
+    }
+
+    // Close the create form modal
+    function closeUpdateForm() {
+        document.getElementById('update-form').style.display = 'none';
+    }
+
+    function showSearchForm() {
+        document.getElementById('search-form').style.display = 'block';
+    }
+
+    // Close the create form modal
+    function closeSearchForm() {
+        document.getElementById('search-form').style.display = 'none';
+    }
+
+    // Update the form fields based on the selected object type
+    function updateFormFields() {
+        const objectType = document.getElementById('object-type').value;
+        const formFields = document.getElementById('form-fields');
+        formFields.innerHTML = ''; // Clear existing fields
+
+        if (objectType === 'mesa') {
+            formFields.innerHTML = `
+                <label for="mesa-number">Número de Mesa:</label>
+                <input type="text" id="mesa-number" name="mesa-number">
+                <label for="mesa-capacity">Capacidad:</label>
+                <input type="text" id="mesa-capacity" name="mesa-capacity">
+            `;
+        } else if (objectType === 'cliente') {
+            formFields.innerHTML = `
+                <label for="cliente-name">Nombre:</label>
+                <input type="text" id="cliente-name" name="cliente-name">
+                <label for="cliente-email">Email:</label>
+                <input type="email" id="cliente-email" name="cliente-email">
+            `;
+        } else if (objectType === 'reservacion') {
+            formFields.innerHTML = `
+                <label for="reservacion-date">Fecha:</label>
+                <input type="date" id="reservacion-date" name="reservacion-date">
+                <label for="reservacion-time">Hora:</label>
+                <input type="time" id="reservacion-time" name="reservacion-time">
+                <label for="reservacion-client">Cliente:</label>
+                <input type="text" id="reservacion-client" name="reservacion-client">
+            `;
+        }
+    }
+
+    // Handle the creation of the new object
+    function createObject() {
+    const objectType = document.getElementById('object-type').value;
+    let newObject = {};
+
+    if (objectType === 'mesa') {
+        newObject = {
+            type: 'mesa',
+            number: document.getElementById('mesa-number').value,
+            capacity: document.getElementById('mesa-capacity').value
+        };
+
+        // Create a button for the new mesa
+        const button = document.createElement('button');
+        button.textContent = `Mesa ${newObject.number}`;
+        button.classList.add('mesa-button');
+
+        // Create a dropdown for additional information
+        const dropdown = document.createElement('div');
+        dropdown.classList.add('dropdown-content');
+        dropdown.innerHTML = `
+            <p>Capacidad: ${newObject.capacity}</p>
+        `;
+
+        // Append the dropdown to the button
+        button.appendChild(dropdown);
+
+        // Append the button to the display-box container
+        document.getElementById('display-box').appendChild(button);
+    } else if (objectType === 'cliente') {
+        newObject = {
+            type: 'cliente',
+            name: document.getElementById('cliente-name').value,
+            email: document.getElementById('cliente-email').value
+        };
+
+        // Create a button for the new cliente
+        const button = document.createElement('button');
+        button.textContent = `Cliente ${newObject.name}`;
+        button.classList.add('cliente-button');
+
+        // Create a dropdown for additional information
+        const dropdown = document.createElement('div');
+        dropdown.classList.add('dropdown-content');
+        dropdown.innerHTML = `
+            <p>Email: ${newObject.email}</p>
+        `;
+
+        // Append the dropdown to the button
+        button.appendChild(dropdown);
+
+        // Append the button to the display-box container
+        document.getElementById('display-box').appendChild(button);
+    } else if (objectType === 'reservacion') {
+        newObject = {
+            type: 'reservacion',
+            date: document.getElementById('reservacion-date').value,
+            time: document.getElementById('reservacion-time').value,
+            client: document.getElementById('reservacion-client').value
+        };
+
+        // Create a button for the new reservacion
+        const button = document.createElement('button');
+        button.textContent = `Reservación ${newObject.date}`;
+        button.classList.add('reservacion-button');
+
+        // Create a dropdown for additional information
+        const dropdown = document.createElement('div');
+        dropdown.classList.add('dropdown-content');
+        dropdown.innerHTML = `
+            <p>Hora: ${newObject.time}</p>
+            <p>Cliente: ${newObject.client}</p>
+        `;
+
+        // Append the dropdown to the button
+        button.appendChild(dropdown);
+
+        // Append the button to the display-box container
+        document.getElementById('display-box').appendChild(button);
+    }
+
+    console.log('New Object Created:', newObject);
+    closeCreateForm();
+}
+</script>
 </body>
 </html>
