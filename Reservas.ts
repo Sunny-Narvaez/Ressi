@@ -1,16 +1,17 @@
-class Mesa {
-    numeroDeMesa: string;
-
-    constructor(numeroDeMesa: string) {
-        this.numeroDeMesa = numeroDeMesa;
-    }
-}
 
 class Cliente {
     nombre: string;
 
     constructor(nombre: string) {
         this.nombre = nombre;
+    }
+}
+
+class Mesa {
+    numeroDeMesa: string;
+
+    constructor(numeroDeMesa: string) {
+        this.numeroDeMesa = numeroDeMesa;
     }
 }
 
@@ -22,15 +23,15 @@ abstract class Reservacion {
     fecha: Date;
     mesero: string;
 
-    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date | string | number, fecha: Date | string | number, mesero: string) {
+    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date, fecha: Date, mesero: string) {
         if (new.target === Reservacion) {
             throw new TypeError("Cannot construct Reservacion instances directly");
         }
         this.cliente = cliente;
         this.mesa = mesa;
         this.numeroDeAsistentes = numeroDeAsistentes;
-        this.hora = new Date(hora);
-        this.fecha = new Date(fecha);
+        this.hora = hora;
+        this.fecha = fecha;
         this.mesero = mesero;
     }
 
@@ -44,36 +45,41 @@ abstract class Reservacion {
 }
 
 class ReservaConcreta extends Reservacion {
-    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date | string | number, fecha: Date | string | number, mesero: string) {
+    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date, fecha: Date, mesero: string) {
         super(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero);
     }
 }
 
 class ReservacionNormal extends Reservacion {
-    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date | string | number, fecha: Date | string | number, mesero: string) {
+    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date, fecha: Date, mesero: string) {
         super(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero);
-    }
-
-    confirmarMenuEspecial(): void {
-        console.log(`Menu especial confirmado para ${this.cliente.nombre} en la mesa ${this.mesa.numeroDeMesa}`);
-    }
-
-    reservaAutomatica() {
-        console.log(`Reserva automática confirmada para ${this.cliente.nombre} en la mesa ${this.mesa.numeroDeMesa}`);
     }
 }
 
-class DiningParty extends Reservacion {
-    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date | string | number, fecha: Date | string | number, mesero: string) {
-        super(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero);
+class ListaDeReservaciones {
+    reservaciones: Reservacion[];
+
+    constructor() {
+        this.reservaciones = [];
     }
 
-    solicitarDeposito() {
-        console.log(`Depósito solicitado para ${this.cliente.nombre} en la mesa ${this.mesa.numeroDeMesa}`);
+    buscarReservacion(clienteNombre: string): Reservacion | undefined {
+        return this.reservaciones.find(reservacion => reservacion.cliente.nombre === clienteNombre);
     }
 
-    confirmarMenuEspecial() {
-        console.log(`Menu especial confirmado para ${this.cliente.nombre} en la mesa ${this.mesa.numeroDeMesa}`);
+    crearReservacion(tipo: string, cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date, fecha: Date, mesero: string): Reservacion | undefined {
+        let nuevaReservacion;
+        if (tipo === 'normal') {
+            nuevaReservacion = new ReservacionNormal(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero);
+        } else {
+            nuevaReservacion = new ReservaConcreta(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero);
+        }
+        this.reservaciones.push(nuevaReservacion);
+        return nuevaReservacion;
+    }
+
+    eliminarReservacion(clienteNombre: string): void {
+        this.reservaciones = this.reservaciones.filter(reservacion => reservacion.cliente.nombre !== clienteNombre);
     }
 }
 
@@ -84,10 +90,8 @@ class ListaDeMesas {
         this.mesas = [];
     }
 
-    crearMesa(capacidad: number, numeroDeMesa: string): Mesa {
-        const nuevaMesa = new Mesa(numeroDeMesa);
-        this.mesas.push(nuevaMesa);
-        return nuevaMesa;
+    agregarMesa(mesa: Mesa) {
+        this.mesas.push(mesa);
     }
 
     buscarMesa(numeroDeMesa: string): Mesa | undefined {
@@ -99,13 +103,15 @@ class ListaDeMesas {
     }
 }
 
-class ListaDeClientes {
+class SistemaDeReservas {
     clientes: Cliente[];
+    mesas: ListaDeMesas;
     reservaciones: ListaDeReservaciones;
 
-    constructor(reservaciones: ListaDeReservaciones) {
+    constructor(reservaciones: ListaDeReservaciones, mesas: ListaDeMesas) {
         this.clientes = [];
         this.reservaciones = reservaciones;
+        this.mesas = mesas;
     }
 
     agregarCliente(cliente: Cliente) {
@@ -124,57 +130,12 @@ class ListaDeClientes {
     buscarReservacion(clienteNombre: string): Reservacion | undefined {
         return this.reservaciones.buscarReservacion(clienteNombre);
     }
-}
 
-class ListaDeReservaciones {
-    reservaciones: Reservacion[];
-
-    constructor() {
-        this.reservaciones = [];
-    }
-
-    eliminarReservacion(clienteNombre: string): void {
-        this.reservaciones = this.reservaciones.filter(reservacion => reservacion.cliente.nombre !== clienteNombre);
-    }
-
-    crearReservacion(tipo: string, cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: string, fecha: string, mesero: string): Reservacion | undefined {
-        let nuevaReservacion;
-        const horaDate = new Date(`1970-01-01T${hora}:00`);
-        const fechaDate = new Date(fecha);
-        if (tipo === 'normal') {
-            nuevaReservacion = new ReservacionNormal(cliente, mesa, numeroDeAsistentes, horaDate, fechaDate, mesero);
-        } else if (tipo === 'diningParty') {
-            nuevaReservacion = new DiningParty(cliente, mesa, numeroDeAsistentes, horaDate, fechaDate, mesero);
-        }
-        if (nuevaReservacion) {
-            this.reservaciones.push(nuevaReservacion);
-        }
-        return nuevaReservacion;
-    }
-
-    buscarReservacion(clienteNombre: string): Reservacion | undefined {
-        return this.reservaciones.find(reservacion => reservacion.cliente.nombre === clienteNombre);
-    }
-}
-
-class SistemaReservas {
-    clientes: ListaDeClientes;
-    mesas: ListaDeMesas;
-    reservaciones: ListaDeReservaciones;
-
-    constructor() {
-        const listaDeReservaciones = new ListaDeReservaciones();
-        this.clientes = new ListaDeClientes(listaDeReservaciones);
-        this.mesas = new ListaDeMesas();
-        this.reservaciones = new ListaDeReservaciones();
-    }
-
-    gestionarReservas() {
-        // Crear Reserva
-        const cliente = this.clientes.buscarCliente("Juan Perez");
+    test() {
+        const cliente = this.buscarCliente("Juan Perez");
         const mesa = this.mesas.buscarMesa("1");
         if (cliente && mesa) {
-            this.reservaciones.crearReservacion('normal', cliente, mesa, 4, '20:00', '2023-10-10', 'Carlos');
+            this.reservaciones.crearReservacion('normal', cliente, mesa, 4, new Date("1970-01-01T18:00:00"), new Date("2023-10-10"), 'Carlos');
         }
 
         // Cancelar Reserva
@@ -190,7 +151,3 @@ reserva1.confirmarReserva();
 
 const reservaNormal = new ReservacionNormal(cliente1, mesa1, 4, new Date("1970-01-01T18:00:00"), new Date("2023-10-10"), "Carlos");
 reservaNormal.confirmarReserva();
-
-const diningParty = new DiningParty(cliente1, mesa1, 4, new Date("1970-01-01T18:00:00"), new Date("2023-10-10"), "Carlos");
-diningParty.confirmarReserva();
-diningParty.confirmarMenuEspecial();

@@ -1,3 +1,4 @@
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -13,24 +14,19 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var Mesa = /** @class */ (function () {
-    function Mesa(capacidad, numeroDeMesa) {
-        this.capacidad = capacidad;
+var Cliente = (function () {
+    function Cliente(nombre) {
+        this.nombre = nombre;
+    }
+    return Cliente;
+}());
+var Mesa = (function () {
+    function Mesa(numeroDeMesa) {
         this.numeroDeMesa = numeroDeMesa;
     }
     return Mesa;
 }());
-var Cliente = /** @class */ (function () {
-    function Cliente(nombre, numeroTelefonico, correo, alergias, historial) {
-        this.nombre = nombre;
-        this.numeroTelefonico = numeroTelefonico;
-        this.correo = correo;
-        this.alergias = alergias;
-        this.historial = historial;
-    }
-    return Cliente;
-}());
-var Reservacion = /** @class */ (function () {
+var Reservacion = (function () {
     function Reservacion(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) {
         var _newTarget = this.constructor;
         if (_newTarget === Reservacion) {
@@ -39,8 +35,8 @@ var Reservacion = /** @class */ (function () {
         this.cliente = cliente;
         this.mesa = mesa;
         this.numeroDeAsistentes = numeroDeAsistentes;
-        this.hora = new Date(hora);
-        this.fecha = new Date(fecha);
+        this.hora = hora;
+        this.fecha = fecha;
         this.mesero = mesero;
     }
     Reservacion.prototype.confirmarReserva = function () {
@@ -51,47 +47,49 @@ var Reservacion = /** @class */ (function () {
     };
     return Reservacion;
 }());
-var ReservaConcreta = /** @class */ (function (_super) {
+var ReservaConcreta = (function (_super) {
     __extends(ReservaConcreta, _super);
     function ReservaConcreta(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) {
         return _super.call(this, cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) || this;
     }
     return ReservaConcreta;
 }(Reservacion));
-var ReservacionNormal = /** @class */ (function (_super) {
+var ReservacionNormal = (function (_super) {
     __extends(ReservacionNormal, _super);
     function ReservacionNormal(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) {
         return _super.call(this, cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) || this;
     }
-    ReservacionNormal.prototype.confirmarMenuEspecial = function () {
-        console.log("Menu especial confirmado para ".concat(this.cliente.nombre, " en la mesa ").concat(this.mesa.numeroDeMesa));
-    };
-    ReservacionNormal.prototype.reservaAutomatica = function () {
-        console.log("Reserva autom\u00E1tica confirmada para ".concat(this.cliente.nombre, " en la mesa ").concat(this.mesa.numeroDeMesa));
-    };
     return ReservacionNormal;
 }(Reservacion));
-var DiningParty = /** @class */ (function (_super) {
-    __extends(DiningParty, _super);
-    function DiningParty(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) {
-        return _super.call(this, cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) || this;
+var ListaDeReservaciones = (function () {
+    function ListaDeReservaciones() {
+        this.reservaciones = [];
     }
-    DiningParty.prototype.solicitarDeposito = function () {
-        console.log("Dep\u00F3sito solicitado para ".concat(this.cliente.nombre, " en la mesa ").concat(this.mesa.numeroDeMesa));
+    ListaDeReservaciones.prototype.buscarReservacion = function (clienteNombre) {
+        return this.reservaciones.find(function (reservacion) { return reservacion.cliente.nombre === clienteNombre; });
     };
-    DiningParty.prototype.confirmarMenuEspecial = function () {
-        console.log("Menu especial confirmado para ".concat(this.cliente.nombre, " en la mesa ").concat(this.mesa.numeroDeMesa));
+    ListaDeReservaciones.prototype.crearReservacion = function (tipo, cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) {
+        var nuevaReservacion;
+        if (tipo === 'normal') {
+            nuevaReservacion = new ReservacionNormal(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero);
+        }
+        else {
+            nuevaReservacion = new ReservaConcreta(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero);
+        }
+        this.reservaciones.push(nuevaReservacion);
+        return nuevaReservacion;
     };
-    return DiningParty;
-}(Reservacion));
-var ListaDeMesas = /** @class */ (function () {
+    ListaDeReservaciones.prototype.eliminarReservacion = function (clienteNombre) {
+        this.reservaciones = this.reservaciones.filter(function (reservacion) { return reservacion.cliente.nombre !== clienteNombre; });
+    };
+    return ListaDeReservaciones;
+}());
+var ListaDeMesas = (function () {
     function ListaDeMesas() {
         this.mesas = [];
     }
-    ListaDeMesas.prototype.crearMesa = function (capacidad, numeroDeMesa) {
-        var nuevaMesa = new Mesa(capacidad, numeroDeMesa);
-        this.mesas.push(nuevaMesa);
-        return nuevaMesa;
+    ListaDeMesas.prototype.agregarMesa = function (mesa) {
+        this.mesas.push(mesa);
     };
     ListaDeMesas.prototype.buscarMesa = function (numeroDeMesa) {
         return this.mesas.find(function (mesa) { return mesa.numeroDeMesa === numeroDeMesa; });
@@ -101,79 +99,310 @@ var ListaDeMesas = /** @class */ (function () {
     };
     return ListaDeMesas;
 }());
-var ListaDeClientes = /** @class */ (function () {
-    function ListaDeClientes(reservaciones) {
+var SistemaDeReservas = (function () {
+    function SistemaDeReservas(reservaciones, mesas) {
         this.clientes = [];
         this.reservaciones = reservaciones;
+        this.mesas = mesas;
     }
-    ListaDeClientes.prototype.agregarCliente = function (cliente) {
+    SistemaDeReservas.prototype.agregarCliente = function (cliente) {
         this.clientes.push(cliente);
         return cliente;
     };
-    ListaDeClientes.prototype.buscarCliente = function (nombre) {
+    SistemaDeReservas.prototype.buscarCliente = function (nombre) {
         return this.clientes.find(function (cliente) { return cliente.nombre === nombre; });
     };
-    ListaDeClientes.prototype.eliminarCliente = function (nombre) {
+    SistemaDeReservas.prototype.eliminarCliente = function (nombre) {
         this.clientes = this.clientes.filter(function (cliente) { return cliente.nombre !== nombre; });
     };
-    ListaDeClientes.prototype.buscarReservacion = function (clienteNombre) {
+    SistemaDeReservas.prototype.buscarReservacion = function (clienteNombre) {
         return this.reservaciones.buscarReservacion(clienteNombre);
     };
-    return ListaDeClientes;
-}());
-var ListaDeReservaciones = /** @class */ (function () {
-    function ListaDeReservaciones() {
-        this.reservaciones = [];
-    }
-    ListaDeReservaciones.prototype.eliminarReservacion = function (clienteNombre) {
-        this.reservaciones = this.reservaciones.filter(function (reservacion) { return reservacion.cliente.nombre !== clienteNombre; });
-    };
-    ListaDeReservaciones.prototype.crearReservacion = function (tipo, cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) {
-        var nuevaReservacion;
-        var horaDate = new Date("1970-01-01T".concat(hora, ":00"));
-        var fechaDate = new Date(fecha);
-        if (tipo === 'normal') {
-            nuevaReservacion = new ReservacionNormal(cliente, mesa, numeroDeAsistentes, horaDate, fechaDate, mesero);
-        }
-        else if (tipo === 'diningParty') {
-            nuevaReservacion = new DiningParty(cliente, mesa, numeroDeAsistentes, horaDate, fechaDate, mesero);
-        }
-        if (nuevaReservacion) {
-            this.reservaciones.push(nuevaReservacion);
-        }
-        return nuevaReservacion;
-    };
-    ListaDeReservaciones.prototype.buscarReservacion = function (clienteNombre) {
-        return this.reservaciones.find(function (reservacion) { return reservacion.cliente.nombre === clienteNombre; });
-    };
-    return ListaDeReservaciones;
-}());
-var SistemaReservas = /** @class */ (function () {
-    function SistemaReservas() {
-        var listaDeReservaciones = new ListaDeReservaciones();
-        this.clientes = new ListaDeClientes(listaDeReservaciones);
-        this.mesas = new ListaDeMesas();
-        this.reservaciones = new ListaDeReservaciones();
-    }
-    SistemaReservas.prototype.gestionarReservas = function () {
-        // Crear Reserva
-        var cliente = this.clientes.buscarCliente("Juan Perez");
-        var mesa = this.mesas.buscarMesa(1);
+    SistemaDeReservas.prototype.test = function () {
+        var cliente = this.buscarCliente("Juan Perez");
+        var mesa = this.mesas.buscarMesa("1");
         if (cliente && mesa) {
-            this.reservaciones.crearReservacion('normal', cliente, mesa, 4, '20:00', '2023-10-10', 'Carlos');
+            this.reservaciones.crearReservacion('normal', cliente, mesa, 4, new Date("1970-01-01T18:00:00"), new Date("2023-10-10"), 'Carlos');
         }
-        // Cancelar Reserva
         this.reservaciones.eliminarReservacion("Juan Perez");
     };
-    return SistemaReservas;
+    return SistemaDeReservas;
 }());
-// Test the code
-var mesa1 = new Mesa(4, 1);
-var cliente1 = new Cliente("Juan Perez", "1234567890", "juan.perez@example.com", ["Nueces"], []);
+var mesa1 = new Mesa("1");
+var cliente1 = new Cliente("Juan Perez");
 var reserva1 = new ReservaConcreta(cliente1, mesa1, 4, new Date("1970-01-01T18:00:00"), new Date("2023-10-10"), "Carlos");
 reserva1.confirmarReserva();
 var reservaNormal = new ReservacionNormal(cliente1, mesa1, 4, new Date("1970-01-01T18:00:00"), new Date("2023-10-10"), "Carlos");
 reservaNormal.confirmarReserva();
-var diningParty = new DiningParty(cliente1, mesa1, 4, new Date("1970-01-01T18:00:00"), new Date("2023-10-10"), "Carlos");
-diningParty.confirmarReserva();
-diningParty.confirmarMenuEspecial();
+
+function updateTopGrid(listType) {
+    const topGrid = document.getElementById('top-grid');
+    const displayBox = document.getElementById('display-box');
+    topGrid.innerHTML = listType;
+
+    // Clear the display box
+    displayBox.innerHTML = '';
+
+    if (listType === 'Lista de mesas') {
+        // Add a button to create a new table
+        const createTableButton = document.createElement('button');
+        createTableButton.innerText = 'Crear Mesa';
+        createTableButton.onclick = showCreateForm;
+        displayBox.appendChild(createTableButton);
+    }
+    // Add logic for other list types if needed
+}
+
+function showCreateForm() {
+    document.getElementById('create-form').style.display = 'block';
+    document.getElementById('delete-form').style.display = 'none';
+    document.getElementById('update-form').style.display = 'none';
+    document.getElementById('search-form').style.display = 'none';
+}
+
+function showDeleteForm() {
+    document.getElementById('delete-form').style.display = 'block';
+    document.getElementById('create-form').style.display = 'none';
+    document.getElementById('update-form').style.display = 'none';
+    document.getElementById('search-form').style.display = 'none';
+}
+
+function showUpdateForm() {
+    document.getElementById('update-form').style.display = 'block';
+    document.getElementById('create-form').style.display = 'none';
+    document.getElementById('delete-form').style.display = 'none';
+    document.getElementById('search-form').style.display = 'none';
+}
+
+function showSearchForm() {
+    document.getElementById('search-form').style.display = 'block';
+    document.getElementById('create-form').style.display = 'none';
+    document.getElementById('delete-form').style.display = 'none';
+    document.getElementById('update-form').style.display = 'none';
+}
+
+function updateFormFields() {
+    const objectType = document.getElementById('object-type').value;
+    const formFields = document.getElementById('form-fields');
+    formFields.innerHTML = ''; // Clear existing fields
+
+    if (objectType === 'mesa') {
+        formFields.innerHTML = `
+            <label for="mesa-num">Número de mesa:</label>
+            <input type="text" id="mesa-num">
+            <label for="mesa-capacidad">Capacidad:</label>
+            <input type="text" id="mesa-capacidad">
+        `;
+    } else if (objectType === 'cliente') {
+        formFields.innerHTML = `
+            <label for="cliente-nombre">Nombre del cliente:</label>
+            <input type="text" id="cliente-nombre">
+            <label for="cliente-email">Email:</label>
+            <input type="email" id="cliente-email">
+        `;
+    } else if (objectType === 'reservacion') {
+        formFields.innerHTML = `
+            <label for="reservacion-fecha">Fecha de reservación:</label>
+            <input type="date" id="reservacion-fecha">
+            <label for="reservacion-hora">Hora:</label>
+            <input type="time" id="reservacion-hora">
+        `;
+    }
+}
+
+function updateDeleteFormFields() {
+    const objectType = document.getElementById('delete-object-type').value;
+    const formFields = document.getElementById('delete-form-fields');
+    formFields.innerHTML = ''; // Clear existing fields
+
+    if (objectType === 'mesa') {
+        formFields.innerHTML = `
+            <label for="delete-num-mesa">Número de mesa:</label>
+            <input type="text" id="delete-num-mesa">
+        `;
+    } else if (objectType === 'cliente') {
+        formFields.innerHTML = `
+            <label for="delete-nombre-cliente">Nombre del cliente:</label>
+            <input type="text" id="delete-nombre-cliente">
+        `;
+    } else if (objectType === 'reservacion') {
+        formFields.innerHTML = `
+            <label for="delete-fecha-reservacion">Fecha de reservación:</label>
+            <input type="date" id="delete-fecha-reservacion">
+        `;
+    }
+}
+
+function updateUpdateFormFields() {
+    const objectType = document.getElementById('update-object-type').value;
+    const formFields = document.getElementById('update-form-fields');
+    formFields.innerHTML = ''; // Clear existing fields
+
+    if (objectType === 'mesa') {
+        formFields.innerHTML = `
+            <label for="update-num-mesa">Número de mesa:</label>
+            <input type="text" id="update-num-mesa">
+            <label for="update-capacidad-mesa">Capacidad:</label>
+            <input type="text" id="update-capacidad-mesa">
+        `;
+    } else if (objectType === 'cliente') {
+        formFields.innerHTML = `
+            <label for="update-nombre-cliente">Nombre del cliente:</label>
+            <input type="text" id="update-nombre-cliente">
+            <label for="update-email-cliente">Email:</label>
+            <input type="email" id="update-email-cliente">
+        `;
+    } else if (objectType === 'reservacion') {
+        formFields.innerHTML = `
+            <label for="update-fecha-reservacion">Fecha de reservación:</label>
+            <input type="date" id="update-fecha-reservacion">
+            <label for="update-hora-reservacion">Hora:</label>
+            <input type="time" id="update-hora-reservacion">
+        `;
+    }
+}
+
+function updateSearchFormFields() {
+    const objectType = document.getElementById('search-object-type').value;
+    const formFields = document.getElementById('search-form-fields');
+    formFields.innerHTML = ''; // Clear existing fields
+
+    if (objectType === 'mesa') {
+        formFields.innerHTML = `
+            <label for="search-num-mesa">Número de mesa:</label>
+            <input type="text" id="search-num-mesa">
+        `;
+    } else if (objectType === 'cliente') {
+        formFields.innerHTML = `
+            <label for="search-nombre-cliente">Nombre del cliente:</label>
+            <input type="text" id="search-nombre-cliente">
+        `;
+    } else if (objectType === 'reservacion') {
+        formFields.innerHTML = `
+            <label for="search-fecha-reservacion">Fecha de reservación:</label>
+            <input type="date" id="search-fecha-reservacion">
+        `;
+    }
+}
+
+function createObject() {
+    const objectType = document.getElementById('object-type').value;
+    let data = {};
+
+    if (objectType === 'mesa') {
+        data.numMesa = document.getElementById('mesa-num').value;
+        data.capacidad = document.getElementById('mesa-capacidad').value;
+    } else if (objectType === 'cliente') {
+        data.nombreCliente = document.getElementById('cliente-nombre').value;
+        data.emailCliente = document.getElementById('cliente-email').value;
+    } else if (objectType === 'reservacion') {
+        data.fechaReservacion = document.getElementById('reservacion-fecha').value;
+        data.horaReservacion = document.getElementById('reservacion-hora').value;
+    }
+
+    console.log('Creating object:', objectType, data);
+    // Add your logic to create the object
+
+    // Hide the create form after creation
+    document.getElementById('create-form').style.display = 'none';
+}
+
+function deleteObject() {
+    const objectType = document.getElementById('delete-object-type').value;
+    let data = {};
+
+    if (objectType === 'mesa') {
+        data.numMesa = document.getElementById('delete-num-mesa').value;
+    } else if (objectType === 'cliente') {
+        data.nombreCliente = document.getElementById('delete-nombre-cliente').value;
+    } else if (objectType === 'reservacion') {
+        data.fechaReservacion = document.getElementById('delete-fecha-reservacion').value;
+    }
+
+    console.log('Deleting object:', objectType, data);
+    // Add your logic to delete the object
+}
+
+function updateObject() {
+    const objectType = document.getElementById('update-object-type').value;
+    let data = {};
+
+    if (objectType === 'mesa') {
+        data.numMesa = document.getElementById('update-num-mesa').value;
+        data.capacidad = document.getElementById('update-capacidad-mesa').value;
+    } else if (objectType === 'cliente') {
+        data.nombreCliente = document.getElementById('update-nombre-cliente').value;
+        data.emailCliente = document.getElementById('update-email-cliente').value;
+    } else if (objectType === 'reservacion') {
+        data.fechaReservacion = document.getElementById('update-fecha-reservacion').value;
+        data.horaReservacion = document.getElementById('update-hora-reservacion').value;
+    }
+
+    console.log('Updating object:', objectType, data);
+    // Add your logic to update the object
+}
+
+function searchObject() {
+    const objectType = document.getElementById('search-object-type').value;
+    let data = {};
+
+    if (objectType === 'mesa') {
+        data.numMesa = document.getElementById('search-num-mesa').value;
+    } else if (objectType === 'cliente') {
+        data.nombreCliente = document.getElementById('search-nombre-cliente').value;
+    } else if (objectType === 'reservacion') {
+        data.fechaReservacion = document.getElementById('search-fecha-reservacion').value;
+    }
+
+    console.log('Searching object:', objectType, data);
+    // Add your logic to search the object
+}
+
+function hideUpdateForm() {
+    document.getElementById('update-form').style.display = 'none';
+}
+
+function showFetchForm() {
+    document.getElementById('fetch-form').style.display = 'block';
+}
+
+function hideFetchForm() {
+    document.getElementById('fetch-form').style.display = 'none';
+}
+
+function handleUpdateObject() {
+    const objectType = document.getElementById('update-object-type').value;
+    let data = {};
+
+    if (objectType === 'mesa') {
+        data.numMesa = document.getElementById('update-num-mesa').value;
+    } else if (objectType === 'cliente') {
+        data.nombreCliente = document.getElementById('update-nombre-cliente').value;
+    } else if (objectType === 'reservacion') {
+        data.fechaReservacion = document.getElementById('update-fecha-reservacion').value;
+    }
+
+    updateObject(objectType, data);
+
+    // Hide the update form
+    hideUpdateForm();
+}
+
+function handleFetchObject() {
+    const objectType = document.getElementById('fetch-object-type').value;
+    let data = {};
+
+    if (objectType === 'mesa') {
+        data.numMesa = document.getElementById('fetch-num-mesa').value;
+    } else if (objectType === 'cliente') {
+        data.nombreCliente = document.getElementById('fetch-nombre-cliente').value;
+    } else if (objectType === 'reservacion') {
+        data.fechaReservacion = document.getElementById('fetch-fecha-reservacion').value;
+    }
+
+    fetchObject(objectType, data);
+
+    // Hide the fetch form
+    hideFetchForm();
+}
+//# sourceMappingURL=Reservas.js.map
