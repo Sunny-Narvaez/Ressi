@@ -1,9 +1,7 @@
 class Mesa {
-    capacidad: number;
-    numeroDeMesa: number;
+    numeroDeMesa: string;
 
-    constructor(capacidad: number, numeroDeMesa: number) {
-        this.capacidad = capacidad;
+    constructor(numeroDeMesa: string) {
         this.numeroDeMesa = numeroDeMesa;
     }
 }
@@ -11,7 +9,7 @@ class Mesa {
 class Cliente {
     nombre: string;
 
-    constructor(nombre: string, numeroTelefonico: string, correo: string, alergias: string[], historial: Reservacion[]) {
+    constructor(nombre: string) {
         this.nombre = nombre;
     }
 }
@@ -24,7 +22,7 @@ abstract class Reservacion {
     fecha: Date;
     mesero: string;
 
-    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date, fecha: Date, mesero: string) {
+    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date | string | number, fecha: Date | string | number, mesero: string) {
         if (new.target === Reservacion) {
             throw new TypeError("Cannot construct Reservacion instances directly");
         }
@@ -46,13 +44,13 @@ abstract class Reservacion {
 }
 
 class ReservaConcreta extends Reservacion {
-    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date, fecha: Date, mesero: string) {
+    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date | string | number, fecha: Date | string | number, mesero: string) {
         super(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero);
     }
 }
 
 class ReservacionNormal extends Reservacion {
-    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date, fecha: Date, mesero: string) {
+    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date | string | number, fecha: Date | string | number, mesero: string) {
         super(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero);
     }
 
@@ -66,7 +64,7 @@ class ReservacionNormal extends Reservacion {
 }
 
 class DiningParty extends Reservacion {
-    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date, fecha: Date, mesero: string) {
+    constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date | string | number, fecha: Date | string | number, mesero: string) {
         super(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero);
     }
 
@@ -86,17 +84,17 @@ class ListaDeMesas {
         this.mesas = [];
     }
 
-    crearMesa(capacidad: number, numeroDeMesa: number): Mesa {
-        const nuevaMesa = new Mesa(capacidad, numeroDeMesa);
+    crearMesa(capacidad: number, numeroDeMesa: string): Mesa {
+        const nuevaMesa = new Mesa(numeroDeMesa);
         this.mesas.push(nuevaMesa);
         return nuevaMesa;
     }
 
-    buscarMesa(numeroDeMesa: number): Mesa | undefined {
+    buscarMesa(numeroDeMesa: string): Mesa | undefined {
         return this.mesas.find(mesa => mesa.numeroDeMesa === numeroDeMesa);
     }
 
-    eliminarMesa(numeroDeMesa: number): void {
+    eliminarMesa(numeroDeMesa: string): void {
         this.mesas = this.mesas.filter(mesa => mesa.numeroDeMesa !== numeroDeMesa);
     }
 }
@@ -174,7 +172,7 @@ class SistemaReservas {
     gestionarReservas() {
         // Crear Reserva
         const cliente = this.clientes.buscarCliente("Juan Perez");
-        const mesa = this.mesas.buscarMesa(1);
+        const mesa = this.mesas.buscarMesa("1");
         if (cliente && mesa) {
             this.reservaciones.crearReservacion('normal', cliente, mesa, 4, '20:00', '2023-10-10', 'Carlos');
         }
@@ -185,8 +183,8 @@ class SistemaReservas {
 }
 
 // Test the code
-const mesa1 = new Mesa(4, 1);
-const cliente1 = new Cliente("Juan Perez", "1234567890", "juan.perez@example.com", ["Nueces"], []);
+const mesa1 = new Mesa("1");
+const cliente1 = new Cliente("Juan Perez");
 const reserva1 = new ReservaConcreta(cliente1, mesa1, 4, new Date("1970-01-01T18:00:00"), new Date("2023-10-10"), "Carlos");
 reserva1.confirmarReserva();
 

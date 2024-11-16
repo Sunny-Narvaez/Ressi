@@ -1,44 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reservas</title>
-    <script src="Reservas.js" defer></script>
+    <title>Object Management</title>
     <style>
-        body {
-            background-color: #1E201E;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Helvetica, Arial, sans-serif; /* Set font to Helvetica */
-        }
-        .top-grid {
-            display: grid;
-            place-items: center;
-            width: 100%;
-            height: 50px;
-            background-color: #3C3D37;
-            color: white;
-            font-size: 24px;
-            margin-bottom: 20px;
-            position: absolute;
-            top: 0;
-        }
-        .menu-container {
-            position: absolute;
-            top: 50px;
-            right: 0;
-            width: 300px;
-            padding: 10px;
-            display: grid;
-            grid-template-rows: repeat(4, 1fr); /* Create 4 equal rows */
-            gap: 10px; /* Space between buttons */
-            height: calc(100vh - 80px - 20px); /* Adjust height to fill the page */
-        }
         .menu-container button {
             background-color: #3C3D37;
             color: white;
@@ -46,10 +12,26 @@
             cursor: pointer;
             width: 100%;
             font-size: 18px; /* Increase font size */
-            text-align: left; /* Align text to the right */
+            text-align: left; /* Align text to the left */
         }
         .menu-container button:hover {
             background-color: #697565;
+        }
+        .display-box {
+            background-color: #3C3D37;
+            padding: 10px;
+            margin-top: 55px;
+            margin-right: auto;
+            margin-left: 5px;
+            margin-bottom: 5px;
+            border: 1px solid #000; /* Optional: Add a border for better visibility */
+            width: 1560px; /* Set the desired width */
+            height: 800px; /* Set the desired height */
+            overflow: auto; /* Add scrollbars if content overflows */
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* Create 4 equal columns */
+            grid-template-rows: repeat(2, 1fr); /* Create 2 equal rows */
+            gap: 10px; /* Space between grid items */
         }
     </style>
 </head>
@@ -62,10 +44,323 @@
         <button onclick="updateTopGrid('Lista de espera')">Lista de espera</button>
         <button onclick="updateTopGrid('Lista de clientes')">Lista de clientes</button>
         <button onclick="updateTopGrid('Lista de mesas')">Lista de mesas</button>
+        <button onclick="showCreateForm()">Crear</button>
+        <button onclick="showDeleteForm()">Eliminar</button> <!-- New Delete Button -->
+        <button onclick="showUpdateForm()">Actualizar</button> <!-- New Update Button -->
+        <button onclick="showSearchForm()">Buscar</button> <!-- New Search Button -->
     </div>
+    <div class="display-box" id="display-box">
+        <!-- Content to display the objects will be inserted here -->
+        <button onclick="showCreateForm()">Crear</button>
+        <button onclick="showDeleteForm()">Eliminar</button>
+        <button onclick="showUpdateForm()">Actualizar</button>
+        <button onclick="showSearchForm()">Buscar</button>
+        <!-- Add more buttons as needed -->
+    </div>
+
+    <!-- Create Form Modal -->
+    <div id="create-form-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('create-form-modal')">&times;</span>
+            <label for="object-type">Tipo de objeto:</label>
+            <select id="object-type" onchange="updateFormFields()">
+                <option value="mesa">Mesa</option>
+                <option value="cliente">Cliente</option>
+                <option value="reservacion">Reservación</option>
+            </select>
+            <div id="form-fields">
+                <!-- Dynamic form fields will be inserted here -->
+            </div>
+            <button onclick="createObject()">Crear</button>
+        </div>
+    </div>
+
+    <!-- Delete Form Modal -->
+    <div id="delete-form-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('delete-form-modal')">&times;</span>
+            <label for="delete-object-type">Tipo de objeto:</label>
+            <select id="delete-object-type" onchange="updateDeleteFormFields()">
+                <option value="mesa">Mesa</option>
+                <option value="cliente">Cliente</option>
+                <option value="reservacion">Reservación</option>
+            </select>
+            <div id="delete-form-fields">
+                <!-- Dynamic form fields will be inserted here -->
+            </div>
+            <button onclick="deleteObject()">Eliminar</button>
+        </div>
+    </div>
+
+    <!-- Update Form Modal -->
+    <div id="update-form-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('update-form-modal')">&times;</span>
+            <label for="update-object-type">Tipo de objeto:</label>
+            <select id="update-object-type" onchange="updateUpdateFormFields()">
+                <option value="mesa">Mesa</option>
+                <option value="cliente">Cliente</option>
+                <option value="reservacion">Reservación</option>
+            </select>
+            <div id="update-form-fields">
+                <!-- Dynamic form fields will be inserted here -->
+            </div>
+            <button onclick="updateObject()">Actualizar</button>
+        </div>
+    </div>
+
+    <!-- Search Form Modal -->
+    <div id="search-form-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('search-form-modal')">&times;</span>
+            <label for="search-object-type">Tipo de objeto:</label>
+            <select id="search-object-type" onchange="updateSearchFormFields()">
+                <option value="mesa">Mesa</option>
+                <option value="cliente">Cliente</option>
+                <option value="reservacion">Reservación</option>
+            </select>
+            <div id="search-form-fields">
+                <!-- Dynamic form fields will be inserted here -->
+            </div>
+            <button onclick="searchObject()">Buscar</button>
+        </div>
+    </div>
+
     <script>
-        function updateTopGrid(buttonName) {
-            document.getElementById('top-grid').innerText = buttonName;
+        function updateTopGrid(listType) {
+            const topGrid = document.getElementById('top-grid');
+            const displayBox = document.getElementById('display-box');
+            topGrid.innerHTML = listType;
+
+            // Clear the display box
+            displayBox.innerHTML = '';
+
+            if (listType === 'Lista de mesas') {
+                // Add a button to create a new table
+                const createTableButton = document.createElement('button');
+                createTableButton.innerText = 'Crear Mesa';
+                createTableButton.onclick = showCreateForm;
+                displayBox.appendChild(createTableButton);
+            }
+            // Add logic for other list types if needed
+        }
+
+        function showCreateForm() {
+            document.getElementById('create-form').style.display = 'block';
+            document.getElementById('delete-form').style.display = 'none';
+            document.getElementById('update-form').style.display = 'none';
+            document.getElementById('search-form').style.display = 'none';
+        }
+
+        function showDeleteForm() {
+            document.getElementById('delete-form').style.display = 'block';
+            document.getElementById('create-form').style.display = 'none';
+            document.getElementById('update-form').style.display = 'none';
+            document.getElementById('search-form').style.display = 'none';
+        }
+
+        function showUpdateForm() {
+            document.getElementById('update-form').style.display = 'block';
+            document.getElementById('create-form').style.display = 'none';
+            document.getElementById('delete-form').style.display = 'none';
+            document.getElementById('search-form').style.display = 'none';
+        }
+
+        function showSearchForm() {
+            document.getElementById('search-form').style.display = 'block';
+            document.getElementById('create-form').style.display = 'none';
+            document.getElementById('delete-form').style.display = 'none';
+            document.getElementById('update-form').style.display = 'none';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function createObject() {
+            const objectType = document.getElementById('object-type').value;
+            let data = {};
+
+            if (objectType === 'mesa') {
+                data.numMesa = document.getElementById('mesa-num').value;
+                data.capacidad = document.getElementById('mesa-capacidad').value;
+            } else if (objectType === 'cliente') {
+                data.nombreCliente = document.getElementById('cliente-nombre').value;
+                data.emailCliente = document.getElementById('cliente-email').value;
+            } else if (objectType === 'reservacion') {
+                data.fechaReservacion = document.getElementById('reservacion-fecha').value;
+                data.horaReservacion = document.getElementById('reservacion-hora').value;
+            }
+
+            console.log('Creating object:', objectType, data);
+            // Add your logic to create the object
+
+            // Hide the create form after creation
+            closeModal('create-form-modal');
+        }
+
+        function updateFormFields() {
+            const objectType = document.getElementById('object-type').value;
+            const formFields = document.getElementById('form-fields');
+            formFields.innerHTML = ''; // Clear existing fields
+
+            if (objectType === 'mesa') {
+                formFields.innerHTML = `
+                    <label for="mesa-num">Número de mesa:</label>
+                    <input type="text" id="mesa-num">
+                    <label for="mesa-capacidad">Capacidad:</label>
+                    <input type="text" id="mesa-capacidad">
+                `;
+            } else if (objectType === 'cliente') {
+                formFields.innerHTML = `
+                    <label for="cliente-nombre">Nombre del cliente:</label>
+                    <input type="text" id="cliente-nombre">
+                    <label for="cliente-email">Email:</label>
+                    <input type="email" id="cliente-email">
+                `;
+            } else if (objectType === 'reservacion') {
+                formFields.innerHTML = `
+                    <label for="reservacion-fecha">Fecha de reservación:</label>
+                    <input type="date" id="reservacion-fecha">
+                    <label for="reservacion-hora">Hora:</label>
+                    <input type="time" id="reservacion-hora">
+                `;
+            }
+        }
+
+        function updateDeleteFormFields() {
+            const objectType = document.getElementById('delete-object-type').value;
+            const formFields = document.getElementById('delete-form-fields');
+            formFields.innerHTML = ''; // Clear existing fields
+
+            if (objectType === 'mesa') {
+                formFields.innerHTML = `
+                    <label for="delete-num-mesa">Número de mesa:</label>
+                    <input type="text" id="delete-num-mesa">
+                `;
+            } else if (objectType === 'cliente') {
+                formFields.innerHTML = `
+                    <label for="delete-nombre-cliente">Nombre del cliente:</label>
+                    <input type="text" id="delete-nombre-cliente">
+                `;
+            } else if (objectType === 'reservacion') {
+                formFields.innerHTML = `
+                    <label for="delete-fecha-reservacion">Fecha de reservación:</label>
+                    <input type="date" id="delete-fecha-reservacion">
+                `;
+            }
+        }
+
+        function updateUpdateFormFields() {
+            const objectType = document.getElementById('update-object-type').value;
+            const formFields = document.getElementById('update-form-fields');
+            formFields.innerHTML = ''; // Clear existing fields
+
+            if (objectType === 'mesa') {
+                formFields.innerHTML = `
+                    <label for="update-num-mesa">Número de mesa:</label>
+                    <input type="text" id="update-num-mesa">
+                    <label for="update-capacidad-mesa">Capacidad:</label>
+                    <input type="text" id="update-capacidad-mesa">
+                `;
+            } else if (objectType === 'cliente') {
+                formFields.innerHTML = `
+                    <label for="update-nombre-cliente">Nombre del cliente:</label>
+                    <input type="text" id="update-nombre-cliente">
+                    <label for="update-email-cliente">Email:</label>
+                    <input type="email" id="update-email-cliente">
+                `;
+            } else if (objectType === 'reservacion') {
+                formFields.innerHTML = `
+                    <label for="update-fecha-reservacion">Fecha de reservación:</label>
+                    <input type="date" id="update-fecha-reservacion">
+                    <label for="update-hora-reservacion">Hora:</label>
+                    <input type="time" id="update-hora-reservacion">
+                `;
+            }
+        }
+
+        function updateSearchFormFields() {
+            const objectType = document.getElementById('search-object-type').value;
+            const formFields = document.getElementById('search-form-fields');
+            formFields.innerHTML = ''; // Clear existing fields
+
+            if (objectType === 'mesa') {
+                formFields.innerHTML = `
+                    <label for="search-num-mesa">Número de mesa:</label>
+                    <input type="text" id="search-num-mesa">
+                `;
+            } else if (objectType === 'cliente') {
+                formFields.innerHTML = `
+                    <label for="search-nombre-cliente">Nombre del cliente:</label>
+                    <input type="text" id="search-nombre-cliente">
+                `;
+            } else if (objectType === 'reservacion') {
+                formFields.innerHTML = `
+                    <label for="search-fecha-reservacion">Fecha de reservación:</label>
+                    <input type="date" id="search-fecha-reservacion">
+                `;
+            }
+        }
+
+        function deleteObject() {
+            const objectType = document.getElementById('delete-object-type').value;
+            let data = {};
+
+            if (objectType === 'mesa') {
+                data.numMesa = document.getElementById('delete-num-mesa').value;
+            } else if (objectType === 'cliente') {
+                data.nombreCliente = document.getElementById('delete-nombre-cliente').value;
+            } else if (objectType === 'reservacion') {
+                data.fechaReservacion = document.getElementById('delete-fecha-reservacion').value;
+            }
+
+            console.log('Deleting object:', objectType, data);
+            // Add your logic to delete the object
+
+            // Hide the delete form after deletion
+            closeModal('delete-form-modal');
+        }
+
+        function updateObject() {
+            const objectType = document.getElementById('update-object-type').value;
+            let data = {};
+
+            if (objectType === 'mesa') {
+                data.numMesa = document.getElementById('update-num-mesa').value;
+                data.capacidad = document.getElementById('update-capacidad-mesa').value;
+            } else if (objectType === 'cliente') {
+                data.nombreCliente = document.getElementById('update-nombre-cliente').value;
+                data.emailCliente = document.getElementById('update-email-cliente').value;
+            } else if (objectType === 'reservacion') {
+                data.fechaReservacion = document.getElementById('update-fecha-reservacion').value;
+                data.horaReservacion = document.getElementById('update-hora-reservacion').value;
+            }
+
+            console.log('Updating object:', objectType, data);
+            // Add your logic to update the object
+
+            // Hide the update form after updating
+            closeModal('update-form-modal');
+        }
+
+        function searchObject() {
+            const objectType = document.getElementById('search-object-type').value;
+            let data = {};
+
+            if (objectType === 'mesa') {
+                data.numMesa = document.getElementById('search-num-mesa').value;
+            } else if (objectType === 'cliente') {
+                data.nombreCliente = document.getElementById('search-nombre-cliente').value;
+            } else if (objectType === 'reservacion') {
+                data.fechaReservacion = document.getElementById('search-fecha-reservacion').value;
+            }
+
+            console.log('Searching object:', objectType, data);
+            // Add your logic to search the object
+
+            // Hide the search form after searching
+            closeModal('search-form-modal');
         }
     </script>
 </body>
