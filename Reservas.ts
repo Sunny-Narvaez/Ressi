@@ -10,17 +10,9 @@ class Mesa {
 
 class Cliente {
     nombre: string;
-    numeroTelefonico: string;
-    correo: string;
-    alergias: string[];
-    historial: Reservacion[];
 
     constructor(nombre: string, numeroTelefonico: string, correo: string, alergias: string[], historial: Reservacion[]) {
         this.nombre = nombre;
-        this.numeroTelefonico = numeroTelefonico;
-        this.correo = correo;
-        this.alergias = alergias;
-        this.historial = historial;
     }
 }
 
@@ -52,7 +44,6 @@ abstract class Reservacion {
         console.log(`Reserva cancelada para ${this.cliente.nombre} en la mesa ${this.mesa.numeroDeMesa}`);
     }
 }
-
 
 class ReservaConcreta extends Reservacion {
     constructor(cliente: Cliente, mesa: Mesa, numeroDeAsistentes: number, hora: Date, fecha: Date, mesero: string) {
