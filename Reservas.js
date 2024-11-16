@@ -135,29 +135,15 @@ reserva1.confirmarReserva();
 var reservaNormal = new ReservacionNormal(cliente1, mesa1, 4, new Date("1970-01-01T18:00:00"), new Date("2023-10-10"), "Carlos");
 reservaNormal.confirmarReserva();
 
-function updateTopGrid(listType) {
-    const topGrid = document.getElementById('top-grid');
-    const displayBox = document.getElementById('display-box');
-    topGrid.innerHTML = listType;
-
-    // Clear the display box
-    displayBox.innerHTML = '';
-
-    if (listType === 'Lista de mesas') {
-        // Add a button to create a new table
-        const createTableButton = document.createElement('button');
-        createTableButton.innerText = 'Crear Mesa';
-        createTableButton.onclick = showCreateForm;
-        displayBox.appendChild(createTableButton);
-    }
-    // Add logic for other list types if needed
-}
-
 function showCreateForm() {
     document.getElementById('create-form').style.display = 'block';
     document.getElementById('delete-form').style.display = 'none';
     document.getElementById('update-form').style.display = 'none';
     document.getElementById('search-form').style.display = 'none';
+}
+
+function closeCreateForm() {
+    document.getElementById('create-form').style.display = 'none';
 }
 
 function showDeleteForm() {
@@ -167,6 +153,10 @@ function showDeleteForm() {
     document.getElementById('search-form').style.display = 'none';
 }
 
+function closeDeleteForm() {
+    document.getElementById('delete-form').style.display = 'none';
+}
+
 function showUpdateForm() {
     document.getElementById('update-form').style.display = 'block';
     document.getElementById('create-form').style.display = 'none';
@@ -174,11 +164,19 @@ function showUpdateForm() {
     document.getElementById('search-form').style.display = 'none';
 }
 
+function closeUpdateForm() {
+    document.getElementById('update-form').style.display = 'none';
+}
+
 function showSearchForm() {
     document.getElementById('search-form').style.display = 'block';
     document.getElementById('create-form').style.display = 'none';
     document.getElementById('delete-form').style.display = 'none';
     document.getElementById('update-form').style.display = 'none';
+}
+
+function closeSearchForm() {
+    document.getElementById('search-form').style.display = 'none';
 }
 
 function updateFormFields() {
@@ -302,9 +300,6 @@ function createObject() {
 
     console.log('Creating object:', objectType, data);
     // Add your logic to create the object
-
-    // Hide the create form after creation
-    document.getElementById('create-form').style.display = 'none';
 }
 
 function deleteObject() {
@@ -404,5 +399,13 @@ function handleFetchObject() {
 
     // Hide the fetch form
     hideFetchForm();
+}
+
+function openCreateForm() {
+    document.getElementById('create-form').style.display = 'block';
+}
+
+function closeCreateForm() {
+    document.getElementById('create-form').style.display = 'none';
 }
 //# sourceMappingURL=Reservas.js.map
