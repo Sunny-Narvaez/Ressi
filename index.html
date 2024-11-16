@@ -5,6 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Object Management</title>
     <style>
+         body {
+        background-color: #1E201E; /* Set the background color for the whole page */
+        }
+        .top-grid {
+            display: grid;
+            place-items: center;
+            width: 100%;
+            height: 50px;
+            background-color: #3C3D37;
+            color: white;
+            font-size: 24px;
+            margin-bottom: 20px;
+            position: absolute;
+            top: 0;
+        }
+        .menu-container {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 300px;
+            padding: 10px;
+            display: grid;
+            grid-template-rows: repeat(4, 1fr); /* Create 4 equal rows */
+            gap: 10px; /* Space between buttons */
+            height: calc(100vh - 80px - 20px); /* Adjust height to fill the page */
+        }
         .menu-container button {
             background-color: #3C3D37;
             color: white;
@@ -24,7 +50,6 @@
             margin-right: auto;
             margin-left: 5px;
             margin-bottom: 5px;
-            border: 1px solid #000; /* Optional: Add a border for better visibility */
             width: 1560px; /* Set the desired width */
             height: 800px; /* Set the desired height */
             overflow: auto; /* Add scrollbars if content overflows */
@@ -51,79 +76,61 @@
     </div>
     <div class="display-box" id="display-box">
         <!-- Content to display the objects will be inserted here -->
-        <button onclick="showCreateForm()">Crear</button>
-        <button onclick="showDeleteForm()">Eliminar</button>
-        <button onclick="showUpdateForm()">Actualizar</button>
-        <button onclick="showSearchForm()">Buscar</button>
-        <!-- Add more buttons as needed -->
+    </div>
+    <!-- Create Form -->
+    <div id="create-form" style="display: none;">
+        <label for="object-type">Tipo de objeto:</label>
+        <select id="object-type" onchange="updateFormFields()">
+            <option value="mesa">Mesa</option>
+            <option value="cliente">Cliente</option>
+            <option value="reservacion">Reservación</option>
+        </select>
+        <div id="form-fields">
+            <!-- Dynamic form fields will be inserted here -->
+        </div>
+        <button onclick="createObject()">Crear</button>
     </div>
 
-    <!-- Create Form Modal -->
-    <div id="create-form-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('create-form-modal')">&times;</span>
-            <label for="object-type">Tipo de objeto:</label>
-            <select id="object-type" onchange="updateFormFields()">
-                <option value="mesa">Mesa</option>
-                <option value="cliente">Cliente</option>
-                <option value="reservacion">Reservación</option>
-            </select>
-            <div id="form-fields">
-                <!-- Dynamic form fields will be inserted here -->
-            </div>
-            <button onclick="createObject()">Crear</button>
+    <!-- Delete Form -->
+    <div id="delete-form" style="display: none;">
+        <label for="delete-object-type">Tipo de objeto:</label>
+        <select id="delete-object-type" onchange="updateDeleteFormFields()">
+            <option value="mesa">Mesa</option>
+            <option value="cliente">Cliente</option>
+            <option value="reservacion">Reservación</option>
+        </select>
+        <div id="delete-form-fields">
+            <!-- Dynamic form fields will be inserted here -->
         </div>
+        <button onclick="deleteObject()">Eliminar</button>
     </div>
 
-    <!-- Delete Form Modal -->
-    <div id="delete-form-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('delete-form-modal')">&times;</span>
-            <label for="delete-object-type">Tipo de objeto:</label>
-            <select id="delete-object-type" onchange="updateDeleteFormFields()">
-                <option value="mesa">Mesa</option>
-                <option value="cliente">Cliente</option>
-                <option value="reservacion">Reservación</option>
-            </select>
-            <div id="delete-form-fields">
-                <!-- Dynamic form fields will be inserted here -->
-            </div>
-            <button onclick="deleteObject()">Eliminar</button>
+    <!-- Update Form -->
+    <div id="update-form" style="display: none;">
+        <label for="update-object-type">Tipo de objeto:</label>
+        <select id="update-object-type" onchange="updateUpdateFormFields()">
+            <option value="mesa">Mesa</option>
+            <option value="cliente">Cliente</option>
+            <option value="reservacion">Reservación</option>
+        </select>
+        <div id="update-form-fields">
+            <!-- Dynamic form fields will be inserted here -->
         </div>
+        <button onclick="updateObject()">Actualizar</button>
     </div>
 
-    <!-- Update Form Modal -->
-    <div id="update-form-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('update-form-modal')">&times;</span>
-            <label for="update-object-type">Tipo de objeto:</label>
-            <select id="update-object-type" onchange="updateUpdateFormFields()">
-                <option value="mesa">Mesa</option>
-                <option value="cliente">Cliente</option>
-                <option value="reservacion">Reservación</option>
-            </select>
-            <div id="update-form-fields">
-                <!-- Dynamic form fields will be inserted here -->
-            </div>
-            <button onclick="updateObject()">Actualizar</button>
+    <!-- Search Form -->
+    <div id="search-form" style="display: none;">
+        <label for="search-object-type">Tipo de objeto:</label>
+        <select id="search-object-type" onchange="updateSearchFormFields()">
+            <option value="mesa">Mesa</option>
+            <option value="cliente">Cliente</option>
+            <option value="reservacion">Reservación</option>
+        </select>
+        <div id="search-form-fields">
+            <!-- Dynamic form fields will be inserted here -->
         </div>
-    </div>
-
-    <!-- Search Form Modal -->
-    <div id="search-form-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('search-form-modal')">&times;</span>
-            <label for="search-object-type">Tipo de objeto:</label>
-            <select id="search-object-type" onchange="updateSearchFormFields()">
-                <option value="mesa">Mesa</option>
-                <option value="cliente">Cliente</option>
-                <option value="reservacion">Reservación</option>
-            </select>
-            <div id="search-form-fields">
-                <!-- Dynamic form fields will be inserted here -->
-            </div>
-            <button onclick="searchObject()">Buscar</button>
-        </div>
+        <button onclick="searchObject()">Buscar</button>
     </div>
 
     <script>
@@ -135,14 +142,7 @@
             // Clear the display box
             displayBox.innerHTML = '';
 
-            if (listType === 'Lista de mesas') {
-                // Add a button to create a new table
-                const createTableButton = document.createElement('button');
-                createTableButton.innerText = 'Crear Mesa';
-                createTableButton.onclick = showCreateForm;
-                displayBox.appendChild(createTableButton);
-            }
-            // Add logic for other list types if needed
+
         }
 
         function showCreateForm() {
