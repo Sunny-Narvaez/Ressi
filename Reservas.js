@@ -1,4 +1,3 @@
-"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -15,24 +14,19 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 var _a, _b, _c, _d, _e, _f, _g, _h;
-const LIST_TYPES = {
-    LISTA_DE_MESAS: 'Mesa',
-    LISTA_DE_CLIENTES: 'Cliente',
-    LISTA_DE_RESERVACIONES: 'Reservacion'
-};
-var Cliente = (function () {
+var Cliente = /** @class */ (function () {
     function Cliente(nombre) {
         this.nombre = nombre;
     }
     return Cliente;
 }());
-var Mesa = (function () {
+var Mesa = /** @class */ (function () {
     function Mesa(numeroDeMesa) {
         this.numeroDeMesa = numeroDeMesa;
     }
     return Mesa;
 }());
-var Reservacion = (function () {
+var Reservacion = /** @class */ (function () {
     function Reservacion(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) {
         var _newTarget = this.constructor;
         if (_newTarget === Reservacion) {
@@ -53,21 +47,21 @@ var Reservacion = (function () {
     };
     return Reservacion;
 }());
-var ReservaConcreta = (function (_super) {
+var ReservaConcreta = /** @class */ (function (_super) {
     __extends(ReservaConcreta, _super);
     function ReservaConcreta(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) {
         return _super.call(this, cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) || this;
     }
     return ReservaConcreta;
 }(Reservacion));
-var ReservacionNormal = (function (_super) {
+var ReservacionNormal = /** @class */ (function (_super) {
     __extends(ReservacionNormal, _super);
     function ReservacionNormal(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) {
         return _super.call(this, cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) || this;
     }
     return ReservacionNormal;
 }(Reservacion));
-var ListaDeReservaciones = (function () {
+var ListaDeReservaciones = /** @class */ (function () {
     function ListaDeReservaciones() {
         this.reservaciones = [];
     }
@@ -90,7 +84,7 @@ var ListaDeReservaciones = (function () {
     };
     return ListaDeReservaciones;
 }());
-var ListaDeMesas = (function () {
+var ListaDeMesas = /** @class */ (function () {
     function ListaDeMesas() {
         this.mesas = [];
     }
@@ -105,7 +99,7 @@ var ListaDeMesas = (function () {
     };
     return ListaDeMesas;
 }());
-var SistemaDeReservas = (function () {
+var SistemaDeReservas = /** @class */ (function () {
     function SistemaDeReservas(reservaciones, mesas) {
         this.clientes = [];
         this.reservaciones = reservaciones;
@@ -140,7 +134,7 @@ var reserva1 = new ReservaConcreta(cliente1, mesa1, 4, new Date("1970-01-01T18:0
 reserva1.confirmarReserva();
 var reservaNormal = new ReservacionNormal(cliente1, mesa1, 4, new Date("1970-01-01T18:00:00"), new Date("2023-10-10"), "Carlos");
 reservaNormal.confirmarReserva();
-var currentListType = 'Lista de reservaciones';
+var currentListType = 'Lista de reservaciones'; // Default list type
 function toggleForm(formId) {
     var forms = ['create-form', 'delete-form', 'update-form', 'search-form'];
     forms.forEach(function (id) {
@@ -150,6 +144,7 @@ function toggleForm(formId) {
         }
     });
 }
+// Example usage:
 (_a = document.getElementById('show-create-form-btn')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', function () { return toggleForm('create-form'); });
 (_b = document.getElementById('show-delete-form-btn')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', function () { return toggleForm('delete-form'); });
 (_c = document.getElementById('show-update-form-btn')) === null || _c === void 0 ? void 0 : _c.addEventListener('click', function () { return toggleForm('update-form'); });
@@ -170,6 +165,7 @@ function toggleForm(formId) {
     var target = event.target;
     updateFormFields(target.value, document.getElementById('search-form-fields'), '', '', '', '', '', '');
 });
+// Removed duplicate function implementation
 function toggleDropdown(dropdownId) {
     var dropdown = document.getElementById(dropdownId);
     if (dropdown) {
@@ -239,7 +235,7 @@ function closeSearchForm() {
 function updateFormFields(value, element, p0, p1, p2, p3, p4, p5) {
     var objectType = document.getElementById('object-type').value;
     var formFields = document.getElementById('form-fields');
-    formFields.innerHTML = '';
+    formFields.innerHTML = ''; // Clear existing fields
     if (objectType === 'mesa') {
         formFields.innerHTML = "\n            <label for=\"mesa-num\">N\u00FAmero de mesa:</label>\n            <input type=\"text\" id=\"mesa-num\">\n            <label for=\"mesa-capacidad\">Capacidad:</label>\n            <input type=\"text\" id=\"mesa-capacidad\">\n        ";
     }
@@ -247,7 +243,7 @@ function updateFormFields(value, element, p0, p1, p2, p3, p4, p5) {
 function updateDeleteFormFields() {
     var objectType = document.getElementById('delete-object-type').value;
     var formFields = document.getElementById('delete-form-fields');
-    formFields.innerHTML = '';
+    formFields.innerHTML = ''; // Clear existing fields
     if (objectType === 'mesa') {
         formFields.innerHTML = "\n            <label for=\"delete-num-mesa\">N\u00FAmero de mesa:</label>\n            <input type=\"text\" id=\"delete-num-mesa\">\n        ";
     }
@@ -261,7 +257,7 @@ function updateDeleteFormFields() {
 function updateUpdateFormFields() {
     var objectType = document.getElementById('update-object-type').value;
     var formFields = document.getElementById('update-form-fields');
-    formFields.innerHTML = '';
+    formFields.innerHTML = ''; // Clear existing fields
     if (objectType === 'mesa') {
         formFields.innerHTML = "\n            <label for=\"update-num-mesa\">N\u00FAmero de mesa:</label>\n            <input type=\"text\" id=\"update-num-mesa\">\n            <label for=\"update-capacidad-mesa\">Capacidad:</label>\n            <input type=\"text\" id=\"update-capacidad-mesa\">\n        ";
     }
@@ -275,7 +271,7 @@ function updateUpdateFormFields() {
 function updateSearchFormFields() {
     var objectType = document.getElementById('search-object-type').value;
     var formFields = document.getElementById('search-form-fields');
-    formFields.innerHTML = '';
+    formFields.innerHTML = ''; // Clear existing fields
     if (objectType === 'mesa') {
         formFields.innerHTML = "\n            <label for=\"search-num-mesa\">N\u00FAmero de mesa:</label>\n            <input type=\"text\" id=\"search-num-mesa\">\n        ";
     }
@@ -296,15 +292,20 @@ function createObject() {
             number: document.getElementById('mesa-number').value,
             capacity: document.getElementById('mesa-capacity').value
         };
+        // Save to localStorage
         saveToLocalStorage('mesas', newObject);
+        // Create a button for the new mesa
         var button = document.createElement('button');
         button.textContent = "Mesa ".concat(newObject.number);
         button.classList.add('mesa-button');
-        button.setAttribute('data-type', 'mesa');
+        button.setAttribute('data-type', 'mesa'); // Add data-type attribute
+        // Create a dropdown for additional information
         var dropdown = document.createElement('div');
         dropdown.classList.add('dropdown-content');
         dropdown.innerHTML = "\n            <p>Capacidad: ".concat(newObject.capacity, "</p>\n        ");
+        // Append the dropdown to the button
         button.appendChild(dropdown);
+        // Append the button to the display-box container
         (_a = document.getElementById('display-box')) === null || _a === void 0 ? void 0 : _a.appendChild(button);
     }
     else if (objectType === 'cliente') {
@@ -313,15 +314,20 @@ function createObject() {
             name: document.getElementById('cliente-name').value,
             email: document.getElementById('cliente-email').value
         };
+        // Save to localStorage
         saveToLocalStorage('clientes', newObject);
+        // Create a button for the new cliente
         var button = document.createElement('button');
         button.textContent = "Cliente ".concat(newObject.name);
         button.classList.add('cliente-button');
-        button.setAttribute('data-type', 'cliente');
+        button.setAttribute('data-type', 'cliente'); // Add data-type attribute
+        // Create a dropdown for additional information
         var dropdown = document.createElement('div');
         dropdown.classList.add('dropdown-content');
         dropdown.innerHTML = "\n            <p>Email: ".concat(newObject.email, "</p>\n        ");
+        // Append the dropdown to the button
         button.appendChild(dropdown);
+        // Append the button to the display-box container
         (_b = document.getElementById('display-box')) === null || _b === void 0 ? void 0 : _b.appendChild(button);
     }
 }
@@ -335,46 +341,36 @@ function loadFromLocalStorage() {
     var clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
     mesas.forEach(function (mesa) {
         var _a;
+        // Create a button for the mesa
         var button = document.createElement('button');
         button.textContent = "Mesa ".concat(mesa.number);
         button.classList.add('mesa-button');
-        button.setAttribute('data-type', 'mesa');
+        button.setAttribute('data-type', 'mesa'); // Add data-type attribute
+        // Create a dropdown for additional information
         var dropdown = document.createElement('div');
         dropdown.classList.add('dropdown-content');
         dropdown.innerHTML = "\n            <p>Capacidad: ".concat(mesa.capacity, "</p>\n        ");
+        // Append the dropdown to the button
         button.appendChild(dropdown);
+        // Append the button to the display-box container
         (_a = document.getElementById('display-box')) === null || _a === void 0 ? void 0 : _a.appendChild(button);
     });
     clientes.forEach(function (cliente) {
         var _a;
+        // Create a button for the cliente
         var button = document.createElement('button');
         button.textContent = "Cliente ".concat(cliente.name);
         button.classList.add('cliente-button');
-        button.setAttribute('data-type', 'cliente');
+        button.setAttribute('data-type', 'cliente'); // Add data-type attribute
+        // Create a dropdown for additional information
         var dropdown = document.createElement('div');
         dropdown.classList.add('dropdown-content');
         dropdown.innerHTML = "\n            <p>Email: ".concat(cliente.email, "</p>\n        ");
+        // Append the dropdown to the button
         button.appendChild(dropdown);
+        // Append the button to the display-box container
         (_a = document.getElementById('display-box')) === null || _a === void 0 ? void 0 : _a.appendChild(button);
     });
 }
-function updateTopGrid(listType) {
-    const topGrid = document.getElementById('top-grid');
-    const displayBox = document.getElementById('display-box');
-    topGrid.innerHTML = listType;
-
-    // Clear the display box
-    displayBox.innerHTML = '';
-
-    // Show or hide buttons based on the selected list type
-    const allButtons = document.querySelectorAll('.mesa-button, .cliente-button, .reservacion-button, .espera-button');
-    allButtons.forEach(button => {
-        if (button.classList.contains(`list-type-${listType.toLowerCase().replace(' ', '-')}`)) {
-            button.style.display = 'block';
-        } else {
-            button.style.display = 'none';
-        }
-    });
-}
+// Call loadFromLocalStorage when the page loads
 window.addEventListener('load', loadFromLocalStorage);
-//# sourceMappingURL=Reservas.js.map

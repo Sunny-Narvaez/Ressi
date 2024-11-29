@@ -161,9 +161,11 @@
                     <input type="date" id="reservacion-fecha">
                     <label for="reservacion-hora">Hora:</label>
                     <input type="time" id="reservacion-hora">
-                `;
-            }
-        }
+                    <label for="reservacion-cliente">Cliente:</label>
+                    <input type="text" id="reservacion-cliente">
+        `;
+    }
+}
 
         function createObject() {
             const objectType = document.getElementById('object-type').value;
@@ -434,7 +436,6 @@
             topGrid.innerHTML = listType;
     
             // Clear the display box
-            displayBox.innerHTML = '';
     
             // Map listType to a CSS class prefix
             const typeToClassMap = {
