@@ -1,4 +1,3 @@
-"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -14,19 +13,20 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var Cliente = (function () {
+var _a, _b, _c, _d, _e, _f, _g, _h;
+var Cliente = /** @class */ (function () {
     function Cliente(nombre) {
         this.nombre = nombre;
     }
     return Cliente;
 }());
-var Mesa = (function () {
+var Mesa = /** @class */ (function () {
     function Mesa(numeroDeMesa) {
         this.numeroDeMesa = numeroDeMesa;
     }
     return Mesa;
 }());
-var Reservacion = (function () {
+var Reservacion = /** @class */ (function () {
     function Reservacion(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) {
         var _newTarget = this.constructor;
         if (_newTarget === Reservacion) {
@@ -47,21 +47,21 @@ var Reservacion = (function () {
     };
     return Reservacion;
 }());
-var ReservaConcreta = (function (_super) {
+var ReservaConcreta = /** @class */ (function (_super) {
     __extends(ReservaConcreta, _super);
     function ReservaConcreta(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) {
         return _super.call(this, cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) || this;
     }
     return ReservaConcreta;
 }(Reservacion));
-var ReservacionNormal = (function (_super) {
+var ReservacionNormal = /** @class */ (function (_super) {
     __extends(ReservacionNormal, _super);
     function ReservacionNormal(cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) {
         return _super.call(this, cliente, mesa, numeroDeAsistentes, hora, fecha, mesero) || this;
     }
     return ReservacionNormal;
 }(Reservacion));
-var ListaDeReservaciones = (function () {
+var ListaDeReservaciones = /** @class */ (function () {
     function ListaDeReservaciones() {
         this.reservaciones = [];
     }
@@ -84,7 +84,7 @@ var ListaDeReservaciones = (function () {
     };
     return ListaDeReservaciones;
 }());
-var ListaDeMesas = (function () {
+var ListaDeMesas = /** @class */ (function () {
     function ListaDeMesas() {
         this.mesas = [];
     }
@@ -99,7 +99,7 @@ var ListaDeMesas = (function () {
     };
     return ListaDeMesas;
 }());
-var SistemaDeReservas = (function () {
+var SistemaDeReservas = /** @class */ (function () {
     function SistemaDeReservas(reservaciones, mesas) {
         this.clientes = [];
         this.reservaciones = reservaciones;
@@ -134,278 +134,243 @@ var reserva1 = new ReservaConcreta(cliente1, mesa1, 4, new Date("1970-01-01T18:0
 reserva1.confirmarReserva();
 var reservaNormal = new ReservacionNormal(cliente1, mesa1, 4, new Date("1970-01-01T18:00:00"), new Date("2023-10-10"), "Carlos");
 reservaNormal.confirmarReserva();
-
-function showCreateForm() {
-    document.getElementById('create-form').style.display = 'block';
-    document.getElementById('delete-form').style.display = 'none';
-    document.getElementById('update-form').style.display = 'none';
-    document.getElementById('search-form').style.display = 'none';
+var currentListType = 'Lista de reservaciones'; // Default list type
+function toggleForm(formId) {
+    var forms = ['create-form', 'delete-form', 'update-form', 'search-form'];
+    forms.forEach(function (id) {
+        var formElement = document.getElementById(id);
+        if (formElement) {
+            formElement.style.display = id === formId ? 'block' : 'none';
+        }
+    });
 }
-
+// Example usage:
+(_a = document.getElementById('show-create-form-btn')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', function () { return toggleForm('create-form'); });
+(_b = document.getElementById('show-delete-form-btn')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', function () { return toggleForm('delete-form'); });
+(_c = document.getElementById('show-update-form-btn')) === null || _c === void 0 ? void 0 : _c.addEventListener('click', function () { return toggleForm('update-form'); });
+(_d = document.getElementById('show-search-form-btn')) === null || _d === void 0 ? void 0 : _d.addEventListener('click', function () { return toggleForm('search-form'); });
+(_e = document.getElementById('object-type')) === null || _e === void 0 ? void 0 : _e.addEventListener('change', function (event) {
+    var target = event.target;
+    updateFormFields(target.value, document.getElementById('form-fields'), '', '', '', '', '', '');
+});
+(_f = document.getElementById('delete-object-type')) === null || _f === void 0 ? void 0 : _f.addEventListener('change', function (event) {
+    var target = event.target;
+    updateFormFields(target.value, document.getElementById('delete-form-fields'), '', '', '', '', '', '');
+});
+(_g = document.getElementById('update-object-type')) === null || _g === void 0 ? void 0 : _g.addEventListener('change', function (event) {
+    var target = event.target;
+    updateFormFields(target.value, document.getElementById('update-form-fields'), '', '', '', '', '', '');
+});
+(_h = document.getElementById('search-object-type')) === null || _h === void 0 ? void 0 : _h.addEventListener('change', function (event) {
+    var target = event.target;
+    updateFormFields(target.value, document.getElementById('search-form-fields'), '', '', '', '', '', '');
+});
+// Removed duplicate function implementation
+function toggleDropdown(dropdownId) {
+    var dropdown = document.getElementById(dropdownId);
+    if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    }
+}
 function closeCreateForm() {
-    document.getElementById('create-form').style.display = 'none';
+    var createForm = document.getElementById('create-form');
+    if (createForm) {
+        createForm.style.display = 'none';
+    }
 }
-
-function showDeleteForm() {
-    document.getElementById('delete-form').style.display = 'block';
-    document.getElementById('create-form').style.display = 'none';
-    document.getElementById('update-form').style.display = 'none';
-    document.getElementById('search-form').style.display = 'none';
-}
-
 function closeDeleteForm() {
-    document.getElementById('delete-form').style.display = 'none';
+    var deleteForm = document.getElementById('delete-form');
+    if (deleteForm) {
+        deleteForm.style.display = 'none';
+    }
 }
-
 function showUpdateForm() {
-    document.getElementById('update-form').style.display = 'block';
-    document.getElementById('create-form').style.display = 'none';
-    document.getElementById('delete-form').style.display = 'none';
-    document.getElementById('search-form').style.display = 'none';
+    var updateForm = document.getElementById('update-form');
+    if (updateForm) {
+        updateForm.style.display = 'block';
+    }
+    var createForm = document.getElementById('create-form');
+    if (createForm) {
+        createForm.style.display = 'none';
+    }
+    var deleteForm = document.getElementById('delete-form');
+    if (deleteForm) {
+        deleteForm.style.display = 'none';
+    }
+    var searchForm = document.getElementById('search-form');
+    if (searchForm) {
+        searchForm.style.display = 'none';
+    }
 }
-
 function closeUpdateForm() {
-    document.getElementById('update-form').style.display = 'none';
+    var updateForm = document.getElementById('update-form');
+    if (updateForm) {
+        updateForm.style.display = 'none';
+    }
 }
-
 function showSearchForm() {
-    document.getElementById('search-form').style.display = 'block';
-    document.getElementById('create-form').style.display = 'none';
-    document.getElementById('delete-form').style.display = 'none';
-    document.getElementById('update-form').style.display = 'none';
+    var searchForm = document.getElementById('search-form');
+    if (searchForm) {
+        searchForm.style.display = 'block';
+    }
+    var createForm = document.getElementById('create-form');
+    if (createForm) {
+        createForm.style.display = 'none';
+    }
+    var deleteForm = document.getElementById('delete-form');
+    if (deleteForm) {
+        deleteForm.style.display = 'none';
+    }
+    var updateForm = document.getElementById('update-form');
+    if (updateForm) {
+        updateForm.style.display = 'none';
+    }
 }
-
 function closeSearchForm() {
-    document.getElementById('search-form').style.display = 'none';
-}
-
-function updateFormFields() {
-    const objectType = document.getElementById('object-type').value;
-    const formFields = document.getElementById('form-fields');
-    formFields.innerHTML = ''; // Clear existing fields
-
-    if (objectType === 'mesa') {
-        formFields.innerHTML = `
-            <label for="mesa-num">Número de mesa:</label>
-            <input type="text" id="mesa-num">
-            <label for="mesa-capacidad">Capacidad:</label>
-            <input type="text" id="mesa-capacidad">
-        `;
-    } else if (objectType === 'cliente') {
-        formFields.innerHTML = `
-            <label for="cliente-nombre">Nombre del cliente:</label>
-            <input type="text" id="cliente-nombre">
-            <label for="cliente-email">Email:</label>
-            <input type="email" id="cliente-email">
-        `;
-    } else if (objectType === 'reservacion') {
-        formFields.innerHTML = `
-            <label for="reservacion-fecha">Fecha de reservación:</label>
-            <input type="date" id="reservacion-fecha">
-            <label for="reservacion-hora">Hora:</label>
-            <input type="time" id="reservacion-hora">
-        `;
+    var searchForm = document.getElementById('search-form');
+    if (searchForm) {
+        searchForm.style.display = 'none';
     }
 }
-
+function updateFormFields(value, element, p0, p1, p2, p3, p4, p5) {
+    var objectType = document.getElementById('object-type').value;
+    var formFields = document.getElementById('form-fields');
+    formFields.innerHTML = ''; // Clear existing fields
+    if (objectType === 'mesa') {
+        formFields.innerHTML = "\n            <label for=\"mesa-num\">N\u00FAmero de mesa:</label>\n            <input type=\"text\" id=\"mesa-num\">\n            <label for=\"mesa-capacidad\">Capacidad:</label>\n            <input type=\"text\" id=\"mesa-capacidad\">\n        ";
+    }
+}
 function updateDeleteFormFields() {
-    const objectType = document.getElementById('delete-object-type').value;
-    const formFields = document.getElementById('delete-form-fields');
+    var objectType = document.getElementById('delete-object-type').value;
+    var formFields = document.getElementById('delete-form-fields');
     formFields.innerHTML = ''; // Clear existing fields
-
     if (objectType === 'mesa') {
-        formFields.innerHTML = `
-            <label for="delete-num-mesa">Número de mesa:</label>
-            <input type="text" id="delete-num-mesa">
-        `;
-    } else if (objectType === 'cliente') {
-        formFields.innerHTML = `
-            <label for="delete-nombre-cliente">Nombre del cliente:</label>
-            <input type="text" id="delete-nombre-cliente">
-        `;
-    } else if (objectType === 'reservacion') {
-        formFields.innerHTML = `
-            <label for="delete-fecha-reservacion">Fecha de reservación:</label>
-            <input type="date" id="delete-fecha-reservacion">
-        `;
+        formFields.innerHTML = "\n            <label for=\"delete-num-mesa\">N\u00FAmero de mesa:</label>\n            <input type=\"text\" id=\"delete-num-mesa\">\n        ";
+    }
+    else if (objectType === 'cliente') {
+        formFields.innerHTML = "\n            <label for=\"delete-nombre-cliente\">Nombre del cliente:</label>\n            <input type=\"text\" id=\"delete-nombre-cliente\">\n        ";
+    }
+    else if (objectType === 'reservacion') {
+        formFields.innerHTML = "\n            <label for=\"delete-fecha-reservacion\">Fecha de reservaci\u00F3n:</label>\n            <input type=\"date\" id=\"delete-fecha-reservacion\">\n        ";
     }
 }
-
 function updateUpdateFormFields() {
-    const objectType = document.getElementById('update-object-type').value;
-    const formFields = document.getElementById('update-form-fields');
+    var objectType = document.getElementById('update-object-type').value;
+    var formFields = document.getElementById('update-form-fields');
     formFields.innerHTML = ''; // Clear existing fields
-
     if (objectType === 'mesa') {
-        formFields.innerHTML = `
-            <label for="update-num-mesa">Número de mesa:</label>
-            <input type="text" id="update-num-mesa">
-            <label for="update-capacidad-mesa">Capacidad:</label>
-            <input type="text" id="update-capacidad-mesa">
-        `;
-    } else if (objectType === 'cliente') {
-        formFields.innerHTML = `
-            <label for="update-nombre-cliente">Nombre del cliente:</label>
-            <input type="text" id="update-nombre-cliente">
-            <label for="update-email-cliente">Email:</label>
-            <input type="email" id="update-email-cliente">
-        `;
-    } else if (objectType === 'reservacion') {
-        formFields.innerHTML = `
-            <label for="update-fecha-reservacion">Fecha de reservación:</label>
-            <input type="date" id="update-fecha-reservacion">
-            <label for="update-hora-reservacion">Hora:</label>
-            <input type="time" id="update-hora-reservacion">
-        `;
+        formFields.innerHTML = "\n            <label for=\"update-num-mesa\">N\u00FAmero de mesa:</label>\n            <input type=\"text\" id=\"update-num-mesa\">\n            <label for=\"update-capacidad-mesa\">Capacidad:</label>\n            <input type=\"text\" id=\"update-capacidad-mesa\">\n        ";
+    }
+    else if (objectType === 'cliente') {
+        formFields.innerHTML = "\n            <label for=\"update-nombre-cliente\">Nombre del cliente:</label>\n            <input type=\"text\" id=\"update-nombre-cliente\">\n            <label for=\"update-email-cliente\">Email:</label>\n            <input type=\"email\" id=\"update-email-cliente\">\n        ";
+    }
+    else if (objectType === 'reservacion') {
+        formFields.innerHTML = "\n            <label for=\"update-fecha-reservacion\">Fecha de reservaci\u00F3n:</label>\n            <input type=\"date\" id=\"update-fecha-reservacion\">\n            <label for=\"update-hora-reservacion\">Hora:</label>\n            <input type=\"time\" id=\"update-hora-reservacion\">\n        ";
     }
 }
-
 function updateSearchFormFields() {
-    const objectType = document.getElementById('search-object-type').value;
-    const formFields = document.getElementById('search-form-fields');
+    var objectType = document.getElementById('search-object-type').value;
+    var formFields = document.getElementById('search-form-fields');
     formFields.innerHTML = ''; // Clear existing fields
-
     if (objectType === 'mesa') {
-        formFields.innerHTML = `
-            <label for="search-num-mesa">Número de mesa:</label>
-            <input type="text" id="search-num-mesa">
-        `;
-    } else if (objectType === 'cliente') {
-        formFields.innerHTML = `
-            <label for="search-nombre-cliente">Nombre del cliente:</label>
-            <input type="text" id="search-nombre-cliente">
-        `;
-    } else if (objectType === 'reservacion') {
-        formFields.innerHTML = `
-            <label for="search-fecha-reservacion">Fecha de reservación:</label>
-            <input type="date" id="search-fecha-reservacion">
-        `;
+        formFields.innerHTML = "\n            <label for=\"search-num-mesa\">N\u00FAmero de mesa:</label>\n            <input type=\"text\" id=\"search-num-mesa\">\n        ";
+    }
+    else if (objectType === 'cliente') {
+        formFields.innerHTML = "\n            <label for=\"search-nombre-cliente\">Nombre del cliente:</label>\n            <input type=\"text\" id=\"search-nombre-cliente\">\n        ";
+    }
+    else if (objectType === 'reservacion') {
+        formFields.innerHTML = "\n            <label for=\"search-fecha-reservacion\">Fecha de reservaci\u00F3n:</label>\n            <input type=\"date\" id=\"search-fecha-reservacion\">\n        ";
     }
 }
-
 function createObject() {
-    const objectType = document.getElementById('object-type').value;
-    let data = {};
-
+    var _a, _b;
+    var objectType = document.getElementById('object-type').value;
+    var newObject = {};
     if (objectType === 'mesa') {
-        data.numMesa = document.getElementById('mesa-num').value;
-        data.capacidad = document.getElementById('mesa-capacidad').value;
-    } else if (objectType === 'cliente') {
-        data.nombreCliente = document.getElementById('cliente-nombre').value;
-        data.emailCliente = document.getElementById('cliente-email').value;
-    } else if (objectType === 'reservacion') {
-        data.fechaReservacion = document.getElementById('reservacion-fecha').value;
-        data.horaReservacion = document.getElementById('reservacion-hora').value;
+        newObject = {
+            type: 'mesa',
+            number: document.getElementById('mesa-number').value,
+            capacity: document.getElementById('mesa-capacity').value
+        };
+        // Save to localStorage
+        saveToLocalStorage('mesas', newObject);
+        // Create a button for the new mesa
+        var button = document.createElement('button');
+        button.textContent = "Mesa ".concat(newObject.number);
+        button.classList.add('mesa-button');
+        button.setAttribute('data-type', 'mesa'); // Add data-type attribute
+        // Create a dropdown for additional information
+        var dropdown = document.createElement('div');
+        dropdown.classList.add('dropdown-content');
+        dropdown.innerHTML = "\n            <p>Capacidad: ".concat(newObject.capacity, "</p>\n        ");
+        // Append the dropdown to the button
+        button.appendChild(dropdown);
+        // Append the button to the display-box container
+        (_a = document.getElementById('display-box')) === null || _a === void 0 ? void 0 : _a.appendChild(button);
     }
-
-    console.log('Creating object:', objectType, data);
-    // Add your logic to create the object
-}
-
-function deleteObject() {
-    const objectType = document.getElementById('delete-object-type').value;
-    let data = {};
-
-    if (objectType === 'mesa') {
-        data.numMesa = document.getElementById('delete-num-mesa').value;
-    } else if (objectType === 'cliente') {
-        data.nombreCliente = document.getElementById('delete-nombre-cliente').value;
-    } else if (objectType === 'reservacion') {
-        data.fechaReservacion = document.getElementById('delete-fecha-reservacion').value;
+    else if (objectType === 'cliente') {
+        newObject = {
+            type: 'cliente',
+            name: document.getElementById('cliente-name').value,
+            email: document.getElementById('cliente-email').value
+        };
+        // Save to localStorage
+        saveToLocalStorage('clientes', newObject);
+        // Create a button for the new cliente
+        var button = document.createElement('button');
+        button.textContent = "Cliente ".concat(newObject.name);
+        button.classList.add('cliente-button');
+        button.setAttribute('data-type', 'cliente'); // Add data-type attribute
+        // Create a dropdown for additional information
+        var dropdown = document.createElement('div');
+        dropdown.classList.add('dropdown-content');
+        dropdown.innerHTML = "\n            <p>Email: ".concat(newObject.email, "</p>\n        ");
+        // Append the dropdown to the button
+        button.appendChild(dropdown);
+        // Append the button to the display-box container
+        (_b = document.getElementById('display-box')) === null || _b === void 0 ? void 0 : _b.appendChild(button);
     }
-
-    console.log('Deleting object:', objectType, data);
-    // Add your logic to delete the object
 }
-
-function updateObject() {
-    const objectType = document.getElementById('update-object-type').value;
-    let data = {};
-
-    if (objectType === 'mesa') {
-        data.numMesa = document.getElementById('update-num-mesa').value;
-        data.capacidad = document.getElementById('update-capacidad-mesa').value;
-    } else if (objectType === 'cliente') {
-        data.nombreCliente = document.getElementById('update-nombre-cliente').value;
-        data.emailCliente = document.getElementById('update-email-cliente').value;
-    } else if (objectType === 'reservacion') {
-        data.fechaReservacion = document.getElementById('update-fecha-reservacion').value;
-        data.horaReservacion = document.getElementById('update-hora-reservacion').value;
-    }
-
-    console.log('Updating object:', objectType, data);
-    // Add your logic to update the object
+function saveToLocalStorage(key, value) {
+    var existingData = JSON.parse(localStorage.getItem(key) || '[]');
+    existingData.push(value);
+    localStorage.setItem(key, JSON.stringify(existingData));
 }
-
-function searchObject() {
-    const objectType = document.getElementById('search-object-type').value;
-    let data = {};
-
-    if (objectType === 'mesa') {
-        data.numMesa = document.getElementById('search-num-mesa').value;
-    } else if (objectType === 'cliente') {
-        data.nombreCliente = document.getElementById('search-nombre-cliente').value;
-    } else if (objectType === 'reservacion') {
-        data.fechaReservacion = document.getElementById('search-fecha-reservacion').value;
-    }
-
-    console.log('Searching object:', objectType, data);
-    // Add your logic to search the object
+function loadFromLocalStorage() {
+    var mesas = JSON.parse(localStorage.getItem('mesas') || '[]');
+    var clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
+    mesas.forEach(function (mesa) {
+        var _a;
+        // Create a button for the mesa
+        var button = document.createElement('button');
+        button.textContent = "Mesa ".concat(mesa.number);
+        button.classList.add('mesa-button');
+        button.setAttribute('data-type', 'mesa'); // Add data-type attribute
+        // Create a dropdown for additional information
+        var dropdown = document.createElement('div');
+        dropdown.classList.add('dropdown-content');
+        dropdown.innerHTML = "\n            <p>Capacidad: ".concat(mesa.capacity, "</p>\n        ");
+        // Append the dropdown to the button
+        button.appendChild(dropdown);
+        // Append the button to the display-box container
+        (_a = document.getElementById('display-box')) === null || _a === void 0 ? void 0 : _a.appendChild(button);
+    });
+    clientes.forEach(function (cliente) {
+        var _a;
+        // Create a button for the cliente
+        var button = document.createElement('button');
+        button.textContent = "Cliente ".concat(cliente.name);
+        button.classList.add('cliente-button');
+        button.setAttribute('data-type', 'cliente'); // Add data-type attribute
+        // Create a dropdown for additional information
+        var dropdown = document.createElement('div');
+        dropdown.classList.add('dropdown-content');
+        dropdown.innerHTML = "\n            <p>Email: ".concat(cliente.email, "</p>\n        ");
+        // Append the dropdown to the button
+        button.appendChild(dropdown);
+        // Append the button to the display-box container
+        (_a = document.getElementById('display-box')) === null || _a === void 0 ? void 0 : _a.appendChild(button);
+    });
 }
-
-function hideUpdateForm() {
-    document.getElementById('update-form').style.display = 'none';
-}
-
-function showFetchForm() {
-    document.getElementById('fetch-form').style.display = 'block';
-}
-
-function hideFetchForm() {
-    document.getElementById('fetch-form').style.display = 'none';
-}
-
-function handleUpdateObject() {
-    const objectType = document.getElementById('update-object-type').value;
-    let data = {};
-
-    if (objectType === 'mesa') {
-        data.numMesa = document.getElementById('update-num-mesa').value;
-    } else if (objectType === 'cliente') {
-        data.nombreCliente = document.getElementById('update-nombre-cliente').value;
-    } else if (objectType === 'reservacion') {
-        data.fechaReservacion = document.getElementById('update-fecha-reservacion').value;
-    }
-
-    updateObject(objectType, data);
-
-    // Hide the update form
-    hideUpdateForm();
-}
-
-function handleFetchObject() {
-    const objectType = document.getElementById('fetch-object-type').value;
-    let data = {};
-
-    if (objectType === 'mesa') {
-        data.numMesa = document.getElementById('fetch-num-mesa').value;
-    } else if (objectType === 'cliente') {
-        data.nombreCliente = document.getElementById('fetch-nombre-cliente').value;
-    } else if (objectType === 'reservacion') {
-        data.fechaReservacion = document.getElementById('fetch-fecha-reservacion').value;
-    }
-
-    fetchObject(objectType, data);
-
-    // Hide the fetch form
-    hideFetchForm();
-}
-
-function openCreateForm() {
-    document.getElementById('create-form').style.display = 'block';
-}
-
-function closeCreateForm() {
-    document.getElementById('create-form').style.display = 'none';
-}
-//# sourceMappingURL=Reservas.js.map
+// Call loadFromLocalStorage when the page loads
+window.addEventListener('load', loadFromLocalStorage);

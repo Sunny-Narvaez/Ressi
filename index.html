@@ -17,13 +17,13 @@
         }
 
         .dropdown-content {
-         display: none;
-         position: absolute;
-         background-color: #f9f9f9;
-         min-width: 160px;
-         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-         padding: 12px 16px;
-         z-index: 1;
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            padding: 12px 16px;
+            z-index: 1;
         }
 
         .mesa-button:hover .dropdown-content,
@@ -118,126 +118,18 @@
             cursor: pointer;
         }
     </style>
-</head>
-<body>
-    <div class="top-grid" id="top-grid">
-        Lista de reservaciones
-    </div>
-    <div class="menu-container right">
-        <button onclick="updateTopGrid('Lista de reservaciones')">Lista de reservaciones</button>
-        <button onclick="updateTopGrid('Lista de espera')">Lista de espera</button>
-        <button onclick="updateTopGrid('Lista de clientes')">Lista de clientes</button>
-        <button onclick="updateTopGrid('Lista de mesas')">Lista de mesas</button>
-        <button onclick="showCreateForm()">Crear</button>
-        <button onclick="showDeleteForm()">Eliminar</button> <!-- New Delete Button -->
-        <button onclick="showUpdateForm()">Actualizar</button> <!-- New Update Button -->
-        <button onclick="showSearchForm()">Buscar</button> <!-- New Search Button -->
-    </div>
-    <div class="display-box" id="display-box">
-        <!-- Content to display the objects will be inserted here -->
-    </div>
-    <!-- Create Form -->
-    <div id="create-form" class="modal">
-        <div class="modal-content">
-            <span class="close-button" onclick="closeCreateForm()">&times;</span>
-            <select id="object-type" onchange="updateFormFields()">
-                <option value="mesa">Mesa</option>
-                <option value="cliente">Cliente</option>
-                <option value="reservacion">Reservación</option>
-            </select>
-            <div id="form-fields">
-                <!-- Dynamic form fields will be inserted here -->
-            </div>
-            <button onclick="createObject()">Crear</button>
-        </div>
-    </div>
-
-    <!-- Delete Form -->
-    <div id="delete-form" class="modal">
-        <div class="modal-content">
-            <span class="close-button" onclick="closeDeleteForm()">&times;</span>
-            <select id="delete-object-type" onchange="updateDeleteFormFields()">
-                <option value="mesa">Mesa</option>
-                <option value="cliente">Cliente</option>
-                <option value="reservacion">Reservación</option>
-            </select>
-            <div id="delete-form-fields">
-                <!-- Dynamic form fields will be inserted here -->
-            </div>
-            <button onclick="deleteObject()">Eliminar1.0</button>
-        </div>
-    </div>
-
-    <!-- Update Form -->
-    <div id="update-form" class="modal">
-        <div class="modal-content">
-            <span class="close-button" onclick="closeUpdateForm()">&times;</span>
-            <select id="update-object-type" onchange="updateUpdateFormFields()">
-                <option value="mesa">Mesa</option>
-                <option value="cliente">Cliente</option>
-                <option value="reservacion">Reservación</option>
-            </select>
-            <div id="update-form-fields">
-                <!-- Dynamic form fields will be inserted here -->
-            </div>
-            <button onclick="updateObject()">Actualizar</button>
-        </div>
-    </div>
-
-    <!-- Search Form -->
-    <div id="search-form" class="modal">
-        <div class="modal-content">
-            <span class="close-button" onclick="closeSearchForm()">&times;</span>
-            <select id="search-object-type" onchange="updateSearchFormFields()">
-                <option value="mesa">Mesa</option>
-                <option value="cliente">Cliente</option>
-                <option value="reservacion">Reservación</option>
-            </select>
-            <div id="search-form-fields">
-                <!-- Dynamic form fields will be inserted here -->
-            </div>
-            <button onclick="searchObject()">Buscar</button>
-        </div>
-    </div>
-
     <script>
-        function updateTopGrid(listType) {
-            const topGrid = document.getElementById('top-grid');
-            const displayBox = document.getElementById('display-box');
-            topGrid.innerHTML = listType;
+        const LIST_TYPES = {
+            LISTA_DE_MESAS: 'mesa',
+            LISTA_DE_CLIENTES: 'cliente',
+            LISTA_DE_RESERVACIONES: 'reservacion'
+        };
 
-            // Clear the display box
-            displayBox.innerHTML = '';
-
-
-        }
-
-        function showCreateForm() {
-            document.getElementById('create-form').style.display = 'block';
-            document.getElementById('delete-form').style.display = 'none';
-            document.getElementById('update-form').style.display = 'none';
-            document.getElementById('search-form').style.display = 'none';
-        }
-
-        function showDeleteForm() {
-            document.getElementById('delete-form').style.display = 'block';
-            document.getElementById('create-form').style.display = 'none';
-            document.getElementById('update-form').style.display = 'none';
-            document.getElementById('search-form').style.display = 'none';
-        }
-
-        function showUpdateForm() {
-            document.getElementById('update-form').style.display = 'block';
-            document.getElementById('create-form').style.display = 'none';
-            document.getElementById('delete-form').style.display = 'none';
-            document.getElementById('search-form').style.display = 'none';
-        }
-
-        function showSearchForm() {
-            document.getElementById('search-form').style.display = 'block';
-            document.getElementById('create-form').style.display = 'none';
-            document.getElementById('delete-form').style.display = 'none';
-            document.getElementById('update-form').style.display = 'none';
+        function showModal(modalId) {
+            const modals = ['create-form', 'delete-form', 'update-form', 'search-form'];
+            modals.forEach(id => {
+                document.getElementById(id).style.display = id === modalId ? 'block' : 'none';
+            });
         }
 
         function closeModal(modalId) {
@@ -269,8 +161,54 @@
                     <input type="date" id="reservacion-fecha">
                     <label for="reservacion-hora">Hora:</label>
                     <input type="time" id="reservacion-hora">
-                `;
+                    <label for="reservacion-cliente">Cliente:</label>
+                    <input type="text" id="reservacion-cliente">
+        `;
+    }
+}
+
+        function createObject() {
+            const objectType = document.getElementById('object-type').value;
+            let newObject = {};
+            let button = document.createElement('button');
+            let dropdown = document.createElement('div');
+
+            if (objectType === LIST_TYPES.LISTA_DE_MESAS) {
+                newObject = {
+                    type: LIST_TYPES.LISTA_DE_MESAS,
+                    number: document.getElementById('mesa-num').value,
+                    capacity: document.getElementById('mesa-capacidad').value
+                };
+                button.textContent = `Mesa ${newObject.number}`;
+                button.classList.add('mesa-button', 'list-type-mesa');
+                dropdown.innerHTML = `<p>Capacidad: ${newObject.capacity}</p>`;
+            } else if (objectType === LIST_TYPES.LISTA_DE_CLIENTES) {
+                newObject = {
+                    type: LIST_TYPES.LISTA_DE_CLIENTES,
+                    name: document.getElementById('cliente-nombre').value,
+                    email: document.getElementById('cliente-email').value
+                };
+                button.textContent = `Cliente ${newObject.name}`;
+                button.classList.add('cliente-button', 'list-type-cliente');
+                dropdown.innerHTML = `<p>Email: ${newObject.email}</p>`;
+            } else if (objectType === LIST_TYPES.LISTA_DE_RESERVACIONES) {
+                newObject = {
+                    type: LIST_TYPES.LISTA_DE_RESERVACIONES,
+                    date: document.getElementById('reservacion-fecha').value,
+                    time: document.getElementById('reservacion-hora').value,
+                    client: document.getElementById('reservacion-cliente').value
+                };
+                button.textContent = `Reservación ${newObject.date}`;
+                button.classList.add('reservacion-button', 'list-type-reservacion');
+                dropdown.innerHTML = `<p>Hora: ${newObject.time}</p><p>Cliente: ${newObject.client}</p>`;
             }
+
+            dropdown.classList.add('dropdown-content');
+            button.appendChild(dropdown);
+            document.getElementById('display-box').appendChild(button);
+
+            console.log('New Object Created:', newObject);
+            closeModal('create-form');
         }
 
         function updateDeleteFormFields() {
@@ -364,7 +302,7 @@
             // Add your logic to delete the object
 
             // Hide the delete form after deletion
-            closeModal('delete-form-modal');
+            closeModal('delete-form');
         }
 
         function updateObject() {
@@ -386,7 +324,7 @@
             // Add your logic to update the object
 
             // Hide the update form after updating
-            closeModal('update-form-modal');
+            closeModal('update-form');
         }
 
         function searchObject() {
@@ -405,163 +343,125 @@
             // Add your logic to search the object
 
             // Hide the search form after searching
-            closeModal('search-form-modal');
+            closeModal('search-form');
         }
     </script>
+</head>
+<body>
+    <div class="top-grid" id="top-grid">
+        Lista de reservaciones
+    </div>
+    <div class="menu-container right">
+        <button onclick="updateTopGrid('Lista de reservaciones')">Lista de reservaciones</button>
+        <button onclick="updateTopGrid('Lista de espera')">Lista de espera</button>
+        <button onclick="updateTopGrid('Lista de clientes')">Lista de clientes</button>
+        <button onclick="updateTopGrid('Lista de mesas')">Lista de mesas</button>
+        <button onclick="showModal('create-form')">Crear</button>
+        <button onclick="showModal('delete-form')">Eliminar</button> <!-- New Delete Button -->
+        <button onclick="showModal('update-form')">Actualizar</button> <!-- New Update Button -->
+        <button onclick="showModal('search-form')">Buscar</button> <!-- New Search Button -->
+    </div>
+    <div class="display-box" id="display-box">
+        <!-- Content to display the objects will be inserted here -->
+    </div>
+    <!-- Create Form -->
+    <div id="create-form" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('create-form')">&times;</span>
+            <select id="object-type" onchange="updateFormFields()">
+                <option value="mesa">Mesa</option>
+                <option value="cliente">Cliente</option>
+                <option value="reservacion">Reservación</option>
+            </select>
+            <div id="form-fields">
+                <!-- Dynamic form fields will be inserted here -->
+            </div>
+            <button onclick="createObject()">Crear</button>
+        </div>
+    </div>
+
+    <!-- Delete Form -->
+    <div id="delete-form" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('delete-form')">&times;</span>
+            <select id="delete-object-type" onchange="updateDeleteFormFields()">
+                <option value="mesa">Mesa</option>
+                <option value="cliente">Cliente</option>
+                <option value="reservacion">Reservación</option>
+            </select>
+            <div id="delete-form-fields">
+                <!-- Dynamic form fields will be inserted here -->
+            </div>
+            <button onclick="deleteObject()">Eliminar</button>
+        </div>
+    </div>
+
+    <!-- Update Form -->
+    <div id="update-form" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('update-form')">&times;</span>
+            <select id="update-object-type" onchange="updateUpdateFormFields()">
+                <option value="mesa">Mesa</option>
+                <option value="cliente">Cliente</option>
+                <option value="reservacion">Reservación</option>
+            </select>
+            <div id="update-form-fields">
+                <!-- Dynamic form fields will be inserted here -->
+            </div>
+            <button onclick="updateObject()">Actualizar</button>
+        </div>
+    </div>
+
+    <!-- Search Form -->
+    <div id="search-form" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('search-form')">&times;</span>
+            <select id="search-object-type" onchange="updateSearchFormFields()">
+                <option value="mesa">Mesa</option>
+                <option value="cliente">Cliente</option>
+                <option value="reservacion">Reservación</option>
+            </select>
+            <div id="search-form-fields">
+                <!-- Dynamic form fields will be inserted here -->
+            </div>
+            <button onclick="searchObject()">Buscar</button>
+        </div>
+    </div>
     <script>
-    // Show the create form modal
-    function showCreateForm() {
-        document.getElementById('create-form').style.display = 'block';
-    }
-
-    // Close the create form modal
-    function closeCreateForm() {
-        document.getElementById('create-form').style.display = 'none';
-    }
+        function updateTopGrid(listType) {
+            const topGrid = document.getElementById('top-grid');
+            const displayBox = document.getElementById('display-box');
+            
+            // Update top grid title
+            topGrid.innerHTML = listType;
     
-    function showDeleteForm() {
-        document.getElementById('delete-form').style.display = 'block';
-    }
-
-    // Close the create form modal
-    function closeDeleteForm() {
-        document.getElementById('delete-form').style.display = 'none';
-    }
-
-    function showUpdateForm() {
-        document.getElementById('update-form').style.display = 'block';
-    }
-
-    // Close the create form modal
-    function closeUpdateForm() {
-        document.getElementById('update-form').style.display = 'none';
-    }
-
-    function showSearchForm() {
-        document.getElementById('search-form').style.display = 'block';
-    }
-
-    // Close the create form modal
-    function closeSearchForm() {
-        document.getElementById('search-form').style.display = 'none';
-    }
-
-    // Update the form fields based on the selected object type
-    function updateFormFields() {
-        const objectType = document.getElementById('object-type').value;
-        const formFields = document.getElementById('form-fields');
-        formFields.innerHTML = ''; // Clear existing fields
-
-        if (objectType === 'mesa') {
-            formFields.innerHTML = `
-                <label for="mesa-number">Número de Mesa:</label>
-                <input type="text" id="mesa-number" name="mesa-number">
-                <label for="mesa-capacity">Capacidad:</label>
-                <input type="text" id="mesa-capacity" name="mesa-capacity">
-            `;
-        } else if (objectType === 'cliente') {
-            formFields.innerHTML = `
-                <label for="cliente-name">Nombre:</label>
-                <input type="text" id="cliente-name" name="cliente-name">
-                <label for="cliente-email">Email:</label>
-                <input type="email" id="cliente-email" name="cliente-email">
-            `;
-        } else if (objectType === 'reservacion') {
-            formFields.innerHTML = `
-                <label for="reservacion-date">Fecha:</label>
-                <input type="date" id="reservacion-date" name="reservacion-date">
-                <label for="reservacion-time">Hora:</label>
-                <input type="time" id="reservacion-time" name="reservacion-time">
-                <label for="reservacion-client">Cliente:</label>
-                <input type="text" id="reservacion-client" name="reservacion-client">
-            `;
+            // Clear the display box
+    
+            // Map listType to a CSS class prefix
+            const typeToClassMap = {
+                'Lista de reservaciones': 'reservacion',
+                'Lista de clientes': 'cliente',
+                'Lista de mesas': 'mesa',
+                'Lista de espera': 'espera'
+            };
+    
+            const classPrefix = typeToClassMap[listType];
+            if (!classPrefix) {
+                console.error(`Unknown listType: ${listType}`);
+                return;
+            }
+    
+            // Filter and append matching buttons to the display box
+            const allButtons = document.querySelectorAll('.mesa-button, .cliente-button, .reservacion-button, .espera-button');
+            allButtons.forEach(button => {
+                if (button.classList.contains(`list-type-${classPrefix}`)) {
+                    displayBox.appendChild(button); // Add the matching button back to display box
+                    button.style.display = 'block'; // Ensure it is visible
+                } else {
+                    button.style.display = 'none'; // Hide non-matching buttons
+                }
+            });
         }
-    }
-
-    // Handle the creation of the new object
-    function createObject() {
-    const objectType = document.getElementById('object-type').value;
-    let newObject = {};
-
-    if (objectType === 'mesa') {
-        newObject = {
-            type: 'mesa',
-            number: document.getElementById('mesa-number').value,
-            capacity: document.getElementById('mesa-capacity').value
-        };
-
-        // Create a button for the new mesa
-        const button = document.createElement('button');
-        button.textContent = `Mesa ${newObject.number}`;
-        button.classList.add('mesa-button');
-
-        // Create a dropdown for additional information
-        const dropdown = document.createElement('div');
-        dropdown.classList.add('dropdown-content');
-        dropdown.innerHTML = `
-            <p>Capacidad: ${newObject.capacity}</p>
-        `;
-
-        // Append the dropdown to the button
-        button.appendChild(dropdown);
-
-        // Append the button to the display-box container
-        document.getElementById('display-box').appendChild(button);
-    } else if (objectType === 'cliente') {
-        newObject = {
-            type: 'cliente',
-            name: document.getElementById('cliente-name').value,
-            email: document.getElementById('cliente-email').value
-        };
-
-        // Create a button for the new cliente
-        const button = document.createElement('button');
-        button.textContent = `Cliente ${newObject.name}`;
-        button.classList.add('cliente-button');
-
-        // Create a dropdown for additional information
-        const dropdown = document.createElement('div');
-        dropdown.classList.add('dropdown-content');
-        dropdown.innerHTML = `
-            <p>Email: ${newObject.email}</p>
-        `;
-
-        // Append the dropdown to the button
-        button.appendChild(dropdown);
-
-        // Append the button to the display-box container
-        document.getElementById('display-box').appendChild(button);
-    } else if (objectType === 'reservacion') {
-        newObject = {
-            type: 'reservacion',
-            date: document.getElementById('reservacion-date').value,
-            time: document.getElementById('reservacion-time').value,
-            client: document.getElementById('reservacion-client').value
-        };
-
-        // Create a button for the new reservacion
-        const button = document.createElement('button');
-        button.textContent = `Reservación ${newObject.date}`;
-        button.classList.add('reservacion-button');
-
-        // Create a dropdown for additional information
-        const dropdown = document.createElement('div');
-        dropdown.classList.add('dropdown-content');
-        dropdown.innerHTML = `
-            <p>Hora: ${newObject.time}</p>
-            <p>Cliente: ${newObject.client}</p>
-        `;
-
-        // Append the dropdown to the button
-        button.appendChild(dropdown);
-
-        // Append the button to the display-box container
-        document.getElementById('display-box').appendChild(button);
-    }
-
-    console.log('New Object Created:', newObject);
-    closeCreateForm();
-}
-</script>
+    </script>
 </body>
 </html>
