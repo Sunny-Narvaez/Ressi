@@ -126,7 +126,7 @@
         };
 
         function showModal(modalId) {
-            const modals = ['create-form', 'delete-form', 'update-form', 'search-form'];
+            const modals = ['create-form', 'update-form', 'search-form'];
             modals.forEach(id => {
                 document.getElementById(id).style.display = id === modalId ? 'block' : 'none';
             });
@@ -167,72 +167,98 @@
     }
 }
 
-        function createObject() {
-            const objectType = document.getElementById('object-type').value;
-            let newObject = {};
-            let button = document.createElement('button');
-            let dropdown = document.createElement('div');
+function createObject() {
+    const objectType = document.getElementById('object-type').value;
+    let newObject = {};
+    let button = document.createElement('button');
+    let dropdown = document.createElement('div');
+    let deleteButton = document.createElement('span');
 
-            if (objectType === LIST_TYPES.LISTA_DE_MESAS) {
-                newObject = {
-                    type: LIST_TYPES.LISTA_DE_MESAS,
-                    number: document.getElementById('mesa-num').value,
-                    capacity: document.getElementById('mesa-capacidad').value
-                };
-                button.textContent = `Mesa ${newObject.number}`;
-                button.classList.add('mesa-button', 'list-type-mesa');
-                dropdown.innerHTML = `<p>Capacidad: ${newObject.capacity}</p>`;
-            } else if (objectType === LIST_TYPES.LISTA_DE_CLIENTES) {
-                newObject = {
-                    type: LIST_TYPES.LISTA_DE_CLIENTES,
-                    name: document.getElementById('cliente-nombre').value,
-                    email: document.getElementById('cliente-email').value
-                };
-                button.textContent = `Cliente ${newObject.name}`;
-                button.classList.add('cliente-button', 'list-type-cliente');
-                dropdown.innerHTML = `<p>Email: ${newObject.email}</p>`;
-            } else if (objectType === LIST_TYPES.LISTA_DE_RESERVACIONES) {
-                newObject = {
-                    type: LIST_TYPES.LISTA_DE_RESERVACIONES,
-                    date: document.getElementById('reservacion-fecha').value,
-                    time: document.getElementById('reservacion-hora').value,
-                    client: document.getElementById('reservacion-cliente').value
-                };
-                button.textContent = `Reservación ${newObject.date}`;
-                button.classList.add('reservacion-button', 'list-type-reservacion');
-                dropdown.innerHTML = `<p>Hora: ${newObject.time}</p><p>Cliente: ${newObject.client}</p>`;
-            }
+    if (objectType === LIST_TYPES.LISTA_DE_MESAS) {
+        newObject = {
+            type: LIST_TYPES.LISTA_DE_MESAS,
+            number: document.getElementById('mesa-num').value,
+            capacity: document.getElementById('mesa-capacidad').value
+        };
+        button.textContent = `Mesa ${newObject.number}`;
+        button.classList.add('mesa-button', 'list-type-mesa');
+        dropdown.innerHTML = `<p>Capacidad: ${newObject.capacity}</p>`;
+    } else if (objectType === LIST_TYPES.LISTA_DE_CLIENTES) {
+        newObject = {
+            type: LIST_TYPES.LISTA_DE_CLIENTES,
+            name: document.getElementById('cliente-nombre').value,
+            email: document.getElementById('cliente-email').value
+        };
+        button.textContent = `Cliente ${newObject.name}`;
+        button.classList.add('cliente-button', 'list-type-cliente');
+        dropdown.innerHTML = `<p>Email: ${newObject.email}</p>`;
+    } else if (objectType === LIST_TYPES.LISTA_DE_RESERVACIONES) {
+        newObject = {
+            type: LIST_TYPES.LISTA_DE_RESERVACIONES,
+            date: document.getElementById('reservacion-fecha').value,
+            time: document.getElementById('reservacion-hora').value,
+            client: document.getElementById('reservacion-cliente').value
+        };
+        button.textContent = `Reservación ${newObject.date}`;
+        button.classList.add('reservacion-button', 'list-type-reservacion');
+        dropdown.innerHTML = `<p>Hora: ${newObject.time}</p><p>Cliente: ${newObject.client}</p>`;
+    }
 
-            dropdown.classList.add('dropdown-content');
-            button.appendChild(dropdown);
-            document.getElementById('display-box').appendChild(button);
+    // Add a unique identifier to the button
+    button.setAttribute('data-id', newObject.number || newObject.name || newObject.date);
 
-            console.log('New Object Created:', newObject);
-            closeModal('create-form');
-        }
+    // Create and style the delete button
+    deleteButton.textContent = '✖';
+    deleteButton.classList.add('delete-button');
+    deleteButton.style.float = 'right';
+    deleteButton.style.cursor = 'pointer';
+    deleteButton.style.color = 'grey';
+    deleteButton.style.marginLeft = '10px';
 
-        function updateDeleteFormFields() {
-            const objectType = document.getElementById('delete-object-type').value;
-            const formFields = document.getElementById('delete-form-fields');
-            formFields.innerHTML = ''; // Clear existing fields
+    // Add delete functionality to the delete button
+    deleteButton.addEventListener('click', function(event) {
+        event.stopPropagation(); // Prevent triggering the parent button's click event
+        const objectId = button.getAttribute('data-id');
+        deleteObject(objectType, objectId);
+    });
 
-            if (objectType === 'mesa') {
-                formFields.innerHTML = `
-                    <label for="delete-num-mesa">Número de mesa:</label>
-                    <input type="text" id="delete-num-mesa">
-                `;
-            } else if (objectType === 'cliente') {
-                formFields.innerHTML = `
-                    <label for="delete-nombre-cliente">Nombre del cliente:</label>
-                    <input type="text" id="delete-nombre-cliente">
-                `;
-            } else if (objectType === 'reservacion') {
-                formFields.innerHTML = `
-                    <label for="delete-fecha-reservacion">Fecha de reservación:</label>
-                    <input type="date" id="delete-fecha-reservacion">
-                `;
-            }
-        }
+    // Append the delete button to the main button
+    button.appendChild(deleteButton);
+
+    dropdown.classList.add('dropdown-content');
+    button.appendChild(dropdown);
+    document.getElementById('display-box').appendChild(button);
+
+    console.log('New Object Created:', newObject);
+    closeModal('create-form');
+}
+
+function deleteObject(objectType, objectId) {
+    if (!objectType) {
+        console.error('Element with ID "delete-object-type" not found.');
+        return;
+    }
+
+    if (!objectId) {
+        console.error('Element with ID "delete-object-id" not found.');
+        return;
+    }
+
+    console.log('Deleting object:', objectType, objectId);
+
+    // Find the button with the matching data-id
+    const button = document.querySelector(`[data-id="${objectId}"]`);
+
+    if (button) {
+        button.remove(); // Remove the button from the DOM
+        console.log(`Object with ID "${objectId}" deleted successfully.`);
+    } else {
+        console.error(`Object with ID "${objectId}" not found.`);
+    }
+
+    // Hide the delete form after deletion
+    closeModal('delete-form');
+}
 
         function updateUpdateFormFields() {
             const objectType = document.getElementById('update-object-type').value;
@@ -284,25 +310,6 @@
                     <input type="date" id="search-fecha-reservacion">
                 `;
             }
-        }
-
-        function deleteObject() {
-            const objectType = document.getElementById('delete-object-type').value;
-            let data = {};
-
-            if (objectType === 'mesa') {
-                data.numMesa = document.getElementById('delete-num-mesa').value;
-            } else if (objectType === 'cliente') {
-                data.nombreCliente = document.getElementById('delete-nombre-cliente').value;
-            } else if (objectType === 'reservacion') {
-                data.fechaReservacion = document.getElementById('delete-fecha-reservacion').value;
-            }
-
-            console.log('Deleting object:', objectType, data);
-            // Add your logic to delete the object
-
-            // Hide the delete form after deletion
-            closeModal('delete-form');
         }
 
         function updateObject() {
@@ -357,7 +364,6 @@
         <button onclick="updateTopGrid('Lista de clientes')">Lista de clientes</button>
         <button onclick="updateTopGrid('Lista de mesas')">Lista de mesas</button>
         <button onclick="showModal('create-form')">Crear</button>
-        <button onclick="showModal('delete-form')">Eliminar</button> <!-- New Delete Button -->
         <button onclick="showModal('update-form')">Actualizar</button> <!-- New Update Button -->
         <button onclick="showModal('search-form')">Buscar</button> <!-- New Search Button -->
     </div>
@@ -377,22 +383,6 @@
                 <!-- Dynamic form fields will be inserted here -->
             </div>
             <button onclick="createObject()">Crear</button>
-        </div>
-    </div>
-
-    <!-- Delete Form -->
-    <div id="delete-form" class="modal">
-        <div class="modal-content">
-            <span class="close-button" onclick="closeModal('delete-form')">&times;</span>
-            <select id="delete-object-type" onchange="updateDeleteFormFields()">
-                <option value="mesa">Mesa</option>
-                <option value="cliente">Cliente</option>
-                <option value="reservacion">Reservación</option>
-            </select>
-            <div id="delete-form-fields">
-                <!-- Dynamic form fields will be inserted here -->
-            </div>
-            <button onclick="deleteObject()">Eliminar</button>
         </div>
     </div>
 
@@ -465,3 +455,11 @@
     </script>
 </body>
 </html>
+<!-- Add these elements to your HTML -->
+<select id="delete-object-type">
+    <option value="mesa">Mesa</option>
+    <option value="cliente">Cliente</option>
+    <option value="reservacion">Reservación</option>
+</select>
+
+<input type="text" id="delete-object-id" placeholder="Enter Object ID">
